@@ -2,10 +2,11 @@
   "name": "rss-gem-puzzle",
   "version": "1.0.0",
   "main": "webpack.config.js",
+  "homepage": "https://rolling-scopes-school.github.io/predmaxim-JSFE2022Q3/rss-gem-puzzle/",
   "scripts": {
     "build": "webpack",
     "dev": "webpack serve --env dev",
-    "deploy": "gh-pages -d dist -- -m 'Deploy to GitHub Pages'"
+    "deploy": "gh-pages -d dist"
   },
   "repository": {
     "type": "git",
@@ -17,7 +18,6 @@
   "bugs": {
     "url": "https://github.com/rolling-scopes-school/predmaxim-JSFE2022Q3/issues"
   },
-  "homepage": "https://rolling-scopes-school.github.io/predmaxim-JSFE2022Q3/rss-gem-puzzle/",
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.1",
