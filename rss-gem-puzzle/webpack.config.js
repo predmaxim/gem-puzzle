@@ -5,7 +5,7 @@ const ghpages = require('gh-pages');
 ghpages.publish(path.join(__dirname, 'dist'), {
   dest: 'rss-gem-puzzle',
   message: 'Deploy to GitHub Pages',
-}, (err) => { console.log('GH-Pages error:', err) });
+}, (err) => { console.log('GH-Pages error:', err) })
 
 
 const devServer = (isDev) => !isDev ? {} : {
@@ -30,7 +30,7 @@ const devServer = (isDev) => !isDev ? {} : {
 
 module.exports = ({ dev }) => ({
   mode: dev ? 'development' : 'production',
-  devtool: dev ? 'inline-source-map' : '',
+  devtool: dev ? 'inline-source-map' : 'source-map',
   entry: {
     index: './src/index.pug'
   },
