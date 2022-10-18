@@ -1,12 +1,9 @@
 const path = require('path');
 const PugPlugin = require('pug-plugin');
 // const CopyWebpackPlugin = require('copy-webpack-plugin');
-const ghpages = require('gh-pages');
-ghpages.publish(path.join(__dirname, 'dist'), {
-  dest: 'rss-gem-puzzle',
-  message: 'Deploy to GitHub Pages',
-}, (err) => { console.log('GH-Pages error:', err) })
 
+const ghpages = (isDev) => !isDev ? {} : {
+}
 
 const devServer = (isDev) => !isDev ? {} : {
   devServer: {

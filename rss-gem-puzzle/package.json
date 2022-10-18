@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rolling-scopes-school/predmaxim-JSFE2022Q3/rss-gem-puzzle.git"
+    "url": "git+https://github.com/rolling-scopes-school/predmaxim-JSFE2022Q3.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/rolling-scopes-school/predmaxim-JSFE2022Q3/rss-gem-puzzle/issues"
+    "url": "https://github.com/rolling-scopes-school/predmaxim-JSFE2022Q3/issues"
   },
-  "homepage": "https://rolling-scopes-school.github.io/predmaxim-JSFE2022Q3/rss-gem-puzzle/dist",
+  "homepage": "https://rolling-scopes-school.github.io/predmaxim-JSFE2022Q3/rss-gem-puzzle/",
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.1",
