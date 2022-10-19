@@ -102,6 +102,6 @@ dist
 
 # TernJS port file
 .tern-port
-rss-gem-puzzle/package-lock.json
+package-lock.json
 .idea/
 node_modules/

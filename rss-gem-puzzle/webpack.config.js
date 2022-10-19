@@ -9,6 +9,7 @@ const aliases = {
   Scss: path.resolve(__dirname, 'src/scss/'),
 }
 
+const deployPath = (isDev) => isDev ? '/' : '/rss-gem-puzzle/'
 const devServer = (isDev) => isDev ? {
   devServer: {
     open: false,
@@ -28,6 +29,7 @@ const devServer = (isDev) => isDev ? {
   stats: 'errors-only'
 } : {}
 
+
 module.exports = ({ isDev }) => ({
   mode: isDev ? 'development' : 'production',
   devtool: isDev ? 'inline-source-map' : 'source-map',
@@ -37,7 +39,7 @@ module.exports = ({ isDev }) => ({
   }, {}),
   output: {
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/rss-gem-puzzle/',
+    publicPath: deployPath(isDev),
     filename: 'assets/js/[name].[contenthash:8].js', // output filename of JS files
     clean: true
   },
