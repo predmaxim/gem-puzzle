@@ -1,50 +1,53 @@
 const path = require('path');
 const PugPlugin = require('pug-plugin');
+const CompressionPlugin = require("compression-webpack-plugin");
 // const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-const ghpages = (isDev) => !isDev ? {} : {
+const pages = ['index'];
+const aliases = {
+  Js: path.resolve(__dirname, 'src/js/'),
+  Scss: path.resolve(__dirname, 'src/scss/'),
 }
 
-const devServer = (isDev) => !isDev ? {} : {
+const devServer = (isDev) => isDev ? {
   devServer: {
     open: false,
-    hot: true,
-    port: 8080,
+    hot: false,
+    port: 9000,
     compress: true,
-    // static: './src/favicon.ico',
     watchFiles: {
       paths: ['src/**/*.*'],
       options: {
         usePolling: true
       }
     },
-  },
-  optimization: {
-    minimize: false,
+    static: {
+      directory: path.resolve(__dirname, 'dist'),
+    },
   },
   stats: 'errors-only'
-}
+} : {}
 
-module.exports = ({ dev }) => ({
-  mode: dev ? 'development' : 'production',
-  devtool: dev ? 'inline-source-map' : 'source-map',
-  entry: {
-    index: './src/index.pug'
-  },
+module.exports = ({ isDev }) => ({
+  mode: isDev ? 'development' : 'production',
+  devtool: isDev ? 'inline-source-map' : 'source-map',
+  entry: pages.reduce((config, page) => {
+    config[page] = `./src/${page}.pug`;
+    return config;
+  }, {}),
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/rss-gem-puzzle/',
     filename: 'assets/js/[name].[contenthash:8].js', // output filename of JS files
     clean: true
   },
   optimization: {
-    minimize: true,
+    splitChunks: {
+      chunks: "all",
+    },
   },
   resolve: {
-    alias: {
-      Img: '/src/assets/img/',
-      Js: '/src/js/',
-      Scss: '/src/scss/',
-    },
+    alias: aliases,
   },
   module: {
     rules: [
@@ -55,9 +58,15 @@ module.exports = ({ dev }) => ({
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp|svg)$/i,
         type: 'asset/resource',
-        generator: {
-          filename: 'assets/img/[name][ext]'
-        }
+        use: {
+          loader: 'responsive-loader',
+          options: {
+            name: 'assets/img/[name].[hash:8]-[width]w.[ext]',
+            // sizes: [320, 640, 960, 1200, 1800, 2400],
+            // quality: 85,
+            format: 'webp',
+          },
+        },
       },
       {
         test: /\.(?:woff(2)?|eot|ttf|otf)$/i,
@@ -68,31 +77,34 @@ module.exports = ({ dev }) => ({
       },
       {
         test: /\.s[ac]ss$/i,
-
-        use: ['css-loader', {
-          loader: "sass-loader",
-          options: {
-            sassOptions: {
-              outputStyle: "compressed",
-            },
-          },
+        exclude: /node_modules/,
+        type: "asset/resource",
+        generator: {
+          filename: "assets/css/[name][contenthash:8].css",
         },
-        ]
+        use: ["sass-loader"],
       },
     ]
   },
   plugins: [
+    new CompressionPlugin({
+      test: /\.(js|png|jpg|html|css)(\?.*)?$/i,
+      // include: /\/assets/,
+    }),
     new PugPlugin({
-      pretty: true,
+      pretty: isDev,
       extractCss: {
-        filename: 'assets/css/[name].[contenthash:8].css'
+        filename: path.resolve(__dirname, 'src/assets/css/[name].[contenthash:8].css')
       },
     }),
     // new CopyWebpackPlugin({
     //   patterns: [
-    //     { from: './src/favicon.ico' }, // <- your path to favicon
+    //     {
+    //       from: path.resolve(__dirname, 'src/favicon.ico'),
+    //       to: 'dist'
+    //     }, 
     //   ]
     // })
   ],
-  ...devServer(dev),
+  ...devServer(isDev),
 });
