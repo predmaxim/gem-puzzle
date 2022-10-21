@@ -1,9 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-
-  // const canvas = document.querySelector('.game');
-  // const game = canvas.getContext('2d');
-
   class Game {
     constructor(setting) {
       this.setting = setting;      
@@ -31,20 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     init() {           
-      window.addEventListener('load',() => {
-        JSON.parse(localStorage.getItem('info'))
-        
-        if (localStorage.getItem('info'))  {
-          this.info = JSON.parse(localStorage.getItem('info'))
-
-          this.timerElem.textContent = `${String(this.info.currentTime.minutes).length < 2 ? 0 : ''}${this.info.currentTime.minutes}:${String(this.info.currentTime.seconds).length < 2 ? 0 : ''}${this.info.currentTime.seconds}`;
-          
-          this.frameSize = this.info.frameSize
-          this.frameSizeInfo.textContent = `${this.info.frameSize}x${this.info.frameSize}`;
-
-
-        }
-      })
+      this.restore();
 
       window.addEventListener('resize',() => {
         if (window.innerWidth < 1024) {1
@@ -74,6 +57,17 @@ document.addEventListener('DOMContentLoaded', () => {
        this.drawCanvas(); 
       }, 0);
 
+    }
+
+    restore() {      
+      if (localStorage.getItem('info'))  {
+        this.info = JSON.parse(localStorage.getItem('info'))
+
+        this.timerElem.textContent = `${String(this.info.currentTime.minutes).length < 2 ? 0 : ''}${this.info.currentTime.minutes}:${String(this.info.currentTime.seconds).length < 2 ? 0 : ''}${this.info.currentTime.seconds}`;
+        
+        this.frameSize = this.info.frameSize
+        this.frameSizeInfo.textContent = `${this.info.frameSize}x${this.info.frameSize}`;
+      }
     }
 
     drawCanvas() {
