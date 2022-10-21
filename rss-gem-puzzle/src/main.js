@@ -6,9 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   class Game {
     constructor(setting) {
-      this.setting = setting;
+      this.setting = setting;      
       this.frameSize = this.setting.frameSize;
       this.itemSize = this.setting.itemSize;
+      this.movesElem = document.querySelector(this.setting.moves);
       this.wrap = document.querySelector(this.setting.wrap);
       this.startBtn = document.querySelector(this.setting.startBtn);
       this.stopBtn = document.querySelector(this.setting.stopBtn);
@@ -17,20 +18,34 @@ document.addEventListener('DOMContentLoaded', () => {
       this.timerElem = document.querySelector(this.setting.timerElem);
       this.frameSizeInfo = document.querySelector(this.setting.frameSizeInfo);
       this.frameSizeBtns = document.querySelectorAll(this.setting.frameSizeBtns);
+      this.canvas = document.createElement('canvas');
+      this.ctx = this.canvas.getContext('2d');
       this.time = 0;
       this.info = {
         moves: 0,
-        timeStart: 0,
-        timeEnd: 0,
-        currentTime: 0,
-        frameSize: this.setting.frameSize,
+        currentTime: {minutes: 0, seconds: 0},
+        frameSize: 0,
       };
-      this.canvas = document.createElement('canvas');
-      this.ctx = this.canvas.getContext('2d');
+      
       this.init();      
     }
 
-    init() {      
+    init() {           
+      window.addEventListener('load',() => {
+        JSON.parse(localStorage.getItem('info'))
+        
+        if (localStorage.getItem('info'))  {
+          this.info = JSON.parse(localStorage.getItem('info'))
+
+          this.timerElem.textContent = `${String(this.info.currentTime.minutes).length < 2 ? 0 : ''}${this.info.currentTime.minutes}:${String(this.info.currentTime.seconds).length < 2 ? 0 : ''}${this.info.currentTime.seconds}`;
+          
+          this.frameSize = this.info.frameSize
+          this.frameSizeInfo.textContent = `${this.info.frameSize}x${this.info.frameSize}`;
+
+
+        }
+      })
+
       window.addEventListener('resize',() => {
         if (window.innerWidth < 1024) {1
           this.itemSize = window.innerWidth / (this.frameSize + 2.5)
@@ -38,27 +53,31 @@ document.addEventListener('DOMContentLoaded', () => {
         } else this.itemSize = this.setting.itemSize
       })       
 
-      addEventListener('click', (e) => {
-        if (document.querySelector('.message')) document.querySelector('.message').remove()
-        if (e.target == this.startBtn) this.start();
+      document.addEventListener('click', (e) => {
+        if (e.target == this.startBtn) {
+          this.start()
+          if (document.querySelector('.message')) document.querySelector('.message').remove()          
+        };
         if (e.target == this.stopBtn) this.stop();
         if (e.target == this.saveBtn) this.save();
         if (e.target == this.resultBtn) this.result();
         if (e.target.classList.contains('frame-size')) {
           this.frameSize = +e.target.dataset.action;
           this.frameSizeInfo.textContent = `${+e.target.dataset.action}x${+e.target.dataset.action}`;
-          this.info.frameSize = this.frameSize;
+          this.info.frameSize = this.frameSize;          
           this.stop();  
           this.drawCanvas();        
         }
-      })
+      })      
 
-      this.drawCanvas();
-      console.log(window.innerWidth)
+      setTimeout(() => {
+       this.drawCanvas(); 
+      }, 0);
+
     }
 
-    drawCanvas() {     
-
+    drawCanvas() {
+      
       if (window.innerWidth < 1024) {
         this.itemSize = window.innerWidth / (this.frameSize + 2.5)
       } else this.itemSize = this.setting.itemSize
@@ -114,21 +133,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     save() {
-      localStorage.setItem(this.info, JSON.stringify(this.info))
+      localStorage.setItem('info', JSON.stringify(this.info))
       console.log('Game saved') 
     }
 
     start() {
-      this.timerElem.textContent = `00:00`;
       this.stop();
       this.newGame();
       this.timer();
-      console.log('Game started');
+      console.log('New game started');
     }
-
 
     stop() {
       clearInterval(this.time);
+      this.movesElem.textContent = 0;
+      this.timerElem.textContent = `00:00`;
       console.log('Game stopped');
     }
 
@@ -138,8 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     timer() {
       console.log('Timer Started') 
-        
-      let minutes = 0, seconds = 0
+      let minutes = 0, seconds = 0  
 
       this.time = setInterval(() => {
         if (seconds == 59) {
@@ -172,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
     saveBtn: '.save',
     resultBtn: '.result',
     timerElem: '.timer span',
+    moves: '.moves span',
     frameSizeBtns: '.frame-size',
     frameSizeInfo: '.frame-size-info span'
   })
