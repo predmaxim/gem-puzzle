@@ -27,16 +27,16 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       this.canvas = document.createElement('canvas');
       this.ctx = this.canvas.getContext('2d');
-      this.getWindowWidth();      
+      this.init();      
     }
 
-    getWindowWidth() {      
+    init() {      
       window.addEventListener('resize',() => {
         if (window.innerWidth < 1024) {1
           this.itemSize = window.innerWidth / (this.frameSize + 2.5)
           this.drawCanvas();
         } else this.itemSize = this.setting.itemSize
-      }) 
+      })       
 
       addEventListener('click', (e) => {
         if (document.querySelector('.message')) document.querySelector('.message').remove()
@@ -57,11 +57,12 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log(window.innerWidth)
     }
 
-    drawCanvas() {
+    drawCanvas() {     
+
       if (window.innerWidth < 1024) {
         this.itemSize = window.innerWidth / (this.frameSize + 2.5)
       } else this.itemSize = this.setting.itemSize
-      // const canvas = document.createElement('canvas')
+
       this.ctx = this.canvas.getContext('2d')
       this.canvas.classList.add('game')
       this.canvas.width = this.frameSize * this.itemSize
@@ -118,17 +119,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     start() {
-      this.stop()
-      this.newGame()
-      this.timer()
-      console.log('Game started')
+      this.timerElem.textContent = `00:00`;
+      this.stop();
+      this.newGame();
+      this.timer();
+      console.log('Game started');
     }
 
 
     stop() {
-      clearInterval(this.time)
-      this.timerElem.textContent = `00:00`
-      console.log('Game stopped')
+      clearInterval(this.time);
+      console.log('Game stopped');
     }
 
     result() {      
