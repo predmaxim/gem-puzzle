@@ -26,12 +26,41 @@ document.addEventListener('DOMContentLoaded', () => {
         frameSize: this.setting.frameSize,
       };
       this.canvas = document.createElement('canvas');
-      this.ctx = this.canvas.getContext('2d')
-      this.init();
+      this.ctx = this.canvas.getContext('2d');
+      this.getWindowWidth();      
     }
 
-    init () {
+    getWindowWidth() {      
+      window.addEventListener('resize',() => {
+        if (window.innerWidth < 1024) {1
+          this.itemSize = window.innerWidth / (this.frameSize + 2.5)
+          this.drawCanvas();
+        } else this.itemSize = this.setting.itemSize
+      }) 
 
+      addEventListener('click', (e) => {
+        if (document.querySelector('.message')) document.querySelector('.message').remove()
+        if (e.target == this.startBtn) this.start();
+        if (e.target == this.stopBtn) this.stop();
+        if (e.target == this.saveBtn) this.save();
+        if (e.target == this.resultBtn) this.result();
+        if (e.target.classList.contains('frame-size')) {
+          this.frameSize = +e.target.dataset.action;
+          this.frameSizeInfo.textContent = `${+e.target.dataset.action}x${+e.target.dataset.action}`;
+          this.info.frameSize = this.frameSize;
+          this.stop();  
+          this.drawCanvas();        
+        }
+      })
+
+      this.drawCanvas();
+      console.log(window.innerWidth)
+    }
+
+    drawCanvas() {
+      if (window.innerWidth < 1024) {
+        this.itemSize = window.innerWidth / (this.frameSize + 2.5)
+      } else this.itemSize = this.setting.itemSize
       // const canvas = document.createElement('canvas')
       this.ctx = this.canvas.getContext('2d')
       this.canvas.classList.add('game')
@@ -52,23 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
           this.ctx.restore();
         }
       }
-
-      addEventListener('click', (e) => {
-        if (document.querySelector('.message')) document.querySelector('.message').remove()
-        if (e.target == this.startBtn) this.start()
-        if (e.target == this.stopBtn) this.stop()
-        if (e.target == this.saveBtn) this.save()
-        if (e.target == this.resultBtn) this.result()
-        if (e.target.classList.contains('frame-size')) {
-          this.frameSize = +e.target.dataset.action
-          this.frameSizeInfo.textContent = `${+e.target.dataset.action}x${+e.target.dataset.action}`
-          this.info.frameSize = this.frameSize
-          this.stop()
-          this.init()
-          
-        }
-      })
-
     }
 
     message(type, str) {
@@ -153,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const game = new Game({
     wrap: '.game-container',
     frameSize: 4,
-    itemSize: 100,
+    itemSize: 90,
     startBtn: '.start',
     stopBtn: '.stop',
     saveBtn: '.save',
