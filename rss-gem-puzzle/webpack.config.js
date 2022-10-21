@@ -9,6 +9,7 @@ const aliases = {
   Scss: path.resolve(__dirname, 'src/scss/'),
 }
 
+
 const deployPath = (isDev) => isDev ? '/' : '/rss-gem-puzzle/'
 const devServer = (isDev) => isDev ? {
   devServer: {
