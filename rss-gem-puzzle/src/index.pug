@@ -11,7 +11,19 @@ html(lang="en")
     main
       .container
         h1 RSS Gem Puzzle
+        .buttons 
+          button Shuffle and start
+          button Stop
+          button Save
+          button Result
+        .current-info
+          .moves Moves: #[span 0]
+          .time Time #[span 00:00]
+        .game-container  
+          //- canvas(width='400', height='400').game.four Game block            
         
+        .frame-size-info Frame size: #[span 4x4]
+        .other-frame-sizes Other sizes: #[span #[a(href='#') 3x3] #[a(href='#') 4x4] #[a(href='#') 5x5] #[a(href='#') 6x6] #[a(href='#') 7x7] #[a(href='#') 8x8]]
     footer
     script(src=require('main.js') defer)
   body

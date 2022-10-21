@@ -1,6 +1,7 @@
 $site-wide: 1200px;
 $color-black: #000;
 $color-white: #fff;
+$four: 4;
 
 html {
   font-size: 16px;
@@ -30,3 +31,130 @@ h1 {
   text-align: center;
   margin-bottom: 30px;
 }
+
+.buttons,
+.current-info,
+.frame-size-info,
+.other-frame-sizes {
+  display: grid;
+  justify-content: center;
+  grid-template-columns: repeat(4, auto);
+  margin: 10px;
+}
+
+.buttons {}
+
+.current-info {
+  .moves {
+    margin-right: 20px;
+  }
+}
+
+.game-container {
+  display: grid;
+  justify-content: center;
+  position: relative;
+
+  .game {
+  //   display: grid;
+  //   justify-content: center;
+  //   align-content: center;
+    border: 1px solid rgb(156, 156, 156);
+
+  //   // &__item {
+  //   //   display: grid;
+  //   //   justify-content: center;
+  //   //   align-content: center;
+  //   //   border: 1px solid rgb(156, 156, 156);
+  //   //   width: 100%;
+  //   //   height: 100%;
+  //   // }
+
+  //   &.three {
+  //     grid-template-columns: repeat(3, minmax(50px, 100px));
+  //     grid-template-rows: repeat(3, 100px);
+  //     grid-template-areas:
+  //       "3 3 3 "
+  //       "3 3 3 "
+  //       "3 3 3 ";
+  //   }
+
+  //   &.four {
+  //     grid-template-columns: repeat(4, minmax(50px, 100px));
+  //     grid-template-rows: repeat(4, 100px);
+  //     grid-template-areas:
+  //       "4 4 4 4"
+  //       "4 4 4 4"
+  //       "4 4 4 4"
+  //       "4 4 4 4";
+  //   }
+
+  //   &.five {
+  //     grid-template-columns: repeat(5, 100px);
+  //     grid-template-rows: repeat(5, 100px);
+  //     grid-template-areas:
+  //       "5 5 5 5 5"
+  //       "5 5 5 5 5"
+  //       "5 5 5 5 5"
+  //       "5 5 5 5 5"
+  //       "5 5 5 5 5";
+  //   }
+
+  //   &.six {
+  //     grid-template-columns: repeat(6, 100px);
+  //     grid-template-rows: repeat(6, 100px);
+  //     grid-template-areas:
+  //       "6 6 6 6 6 6"
+  //       "6 6 6 6 6 6"
+  //       "6 6 6 6 6 6"
+  //       "6 6 6 6 6 6"
+  //       "6 6 6 6 6 6"
+  //       "6 6 6 6 6 6";
+  //   }
+
+  //   &.seven {
+  //     grid-template-columns: repeat(7, 100px);
+  //     grid-template-rows: repeat(7, 100px);
+  //     grid-template-areas:
+  //       "7 7 7 7 7 7 7"
+  //       "7 7 7 7 7 7 7"
+  //       "7 7 7 7 7 7 7"
+  //       "7 7 7 7 7 7 7"
+  //       "7 7 7 7 7 7 7"
+  //       "7 7 7 7 7 7 7"
+  //       "7 7 7 7 7 7 7";
+  //   }
+
+  //   &.eight {
+  //     grid-template-columns: repeat(8, 100px);
+  //     grid-template-rows: repeat(8, 100px);
+  //     grid-template-areas:
+  //       "8 8 8 8 8 8 8 8"
+  //       "8 8 8 8 8 8 8 8"
+  //       "8 8 8 8 8 8 8 8"
+  //       "8 8 8 8 8 8 8 8"
+  //       "8 8 8 8 8 8 8 8"
+  //       "8 8 8 8 8 8 8 8"
+  //       "8 8 8 8 8 8 8 8";
+  //   }   
+  // }
+
+  // .message {
+  //   display: flex;
+  //   justify-content: center;
+  //   align-items: center;
+  //   position: absolute;
+  //   top: 50%;
+  //   left: 50%;
+  //   transform: translate(-50%, -50%);
+  //   -webkit-transform: translate(-50%, -50%);
+  //   -moz-transform: translate(-50%, -50%);
+  //   -ms-transform: translate(-50%, -50%);
+  //   -o-transform: translate(-50%, -50%);
+}
+
+}
+
+.frame-size-info {}
+
+.other-frame-sizes {}
