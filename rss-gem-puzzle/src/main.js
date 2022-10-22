@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
       this.setting = setting;
       this.frameSize = this.setting.frameSize;
       this.itemSize = this.setting.itemSize;
-      this.playField = this.numbers();
+      this.playField = [];
       this.movesElem = document.querySelector(this.setting.moves);
       this.wrap = document.querySelector(this.setting.wrap);
       this.startBtn = document.querySelector(this.setting.startBtn);
@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     init() {
       this.restore();
+      this.numbers();
 
       window.addEventListener('resize', () => {
         if (window.innerWidth < 1024) {
@@ -92,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    drawCanvas() {
+    drawCanvas() {      
 
       if (window.innerWidth < 1024) {
         this.itemSize = window.innerWidth / (this.frameSize + 2.5)
@@ -127,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="message__frame-size">Frame size: ${this.info.frameSize}x${this.info.frameSize}</div>
         <div class="message__time">Time: ${String(this.info.currentTime.minutes).length < 2 ? 0 : ''}${this.info.currentTime.minutes}:${String(this.info.currentTime.seconds).length < 2 ? 0 : ''}${this.info.currentTime.seconds}</div>
         <div class="message__moves">Moves: ${this.info.moves}</div>
-        <div class="message__moves"><b>Best result:</b> Moves: ${this.info.best.moves} | Times: ${String(this.info.best.time.minutes).length < 2 ? 0 : ''}${this.info.best.time.minutes}:${String(this.info.best.time.seconds).length < 2 ? 0 : ''}${this.info.best.time.seconds}</div>
+        <div class="message__moves"><b>Best result:</b> Moves: ${this.info.best.moves} | Time: ${String(this.info.best.time.minutes).length < 2 ? 0 : ''}${this.info.best.time.minutes}:${String(this.info.best.time.seconds).length < 2 ? 0 : ''}${this.info.best.time.seconds}</div>
         <button class="message__button">Close</button>
       </div>`
 
