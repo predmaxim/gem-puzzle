@@ -1,10 +1,16 @@
+// TODO: result is null ? result is best
+// TODO: replace 0 to transparent rect
+// TODO: coords to move
+// TODO: drag & drop
+
+
 document.addEventListener('DOMContentLoaded', () => {
 
   class Game {
     constructor(setting) {
       this.setting = setting;
-      this.frameSize = this.setting.frameSize;
-      this.itemSize = this.setting.itemSize;
+      this.frameSize = 4;
+      this.itemSize = 90;
       this.playField = [];
       this.movesElem = document.querySelector(this.setting.moves);
       this.wrap = document.querySelector(this.setting.wrap);
@@ -205,8 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const game = new Game({
     wrap: '.game-container',
-    frameSize: 4,
-    itemSize: 90,
     startBtn: '.start',
     stopBtn: '.stop',
     saveBtn: '.save',
