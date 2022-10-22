@@ -15,7 +15,7 @@ const devServer = (isDev) => isDev ? {
     open: false,
     hot: false,
     port: 9000,
-    compress: true,
+    compress: false,
     watchFiles: {
       paths: ['src/**/*.*'],
       options: {
@@ -47,6 +47,7 @@ module.exports = ({ isDev }) => ({
     splitChunks: {
       chunks: "all",
     },
+    minimize: !isDev,
   },
   resolve: {
     alias: aliases,
