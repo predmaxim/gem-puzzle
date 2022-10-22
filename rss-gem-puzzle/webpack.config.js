@@ -10,7 +10,6 @@ const aliases = {
 }
 
 
-const deployPath = (isDev) => isDev ? '/' : '/rss-gem-puzzle/'
 const devServer = (isDev) => isDev ? {
   devServer: {
     open: false,
@@ -40,7 +39,7 @@ module.exports = ({ isDev }) => ({
   }, {}),
   output: {
     path: path.resolve(__dirname, 'dist'),
-    publicPath: deployPath(isDev),
+    // publicPath: '/',
     filename: 'assets/js/[name].[contenthash:8].js', // output filename of JS files
     clean: true
   },
@@ -97,7 +96,7 @@ module.exports = ({ isDev }) => ({
     new PugPlugin({
       pretty: isDev,
       extractCss: {
-        filename: path.resolve(__dirname, 'src/assets/css/[name].[contenthash:8].css')
+        filename: path.resolve(__dirname, 'assets/css/[name].[contenthash:8].css')
       },
     }),
     // new CopyWebpackPlugin({
