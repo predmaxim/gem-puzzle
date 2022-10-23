@@ -14,30 +14,31 @@ document.addEventListener('DOMContentLoaded', () => {
       this.frameSizeInfoElem = document.querySelector(this.setting.frameSizeInfoElem);
       this.frameSizeInfoElem = document.querySelector(this.setting.frameSizeInfoElem);
       this.frameSize = 4;
-      this.moves = 0,
-        this.info = {
-          frameSize: this.frameSize,
-          moves: 0,
-          blocks: [],
-          time: { minutes: 0, seconds: 0 },
-          best: { time: { minutes: 0, seconds: 0 }, moves: 0, frameSize: 0, },
-          blocksNumbers: [],
-        };
+      this.moves = 0;
+      this.info = {
+        frameSize: this.frameSize,
+        moves: 0,
+        blocks: [],
+        time: { minutes: 0, seconds: 0 },
+        best: { time: { minutes: 0, seconds: 0 }, moves: 0, frameSize: 0, },
+        currentBlocksMap: [],
+      };
       this.itemSize = 0;
-      this.blocksNumbers = [];
       this.isGame = false;
       this.isTimer = 0;
       this.canvas = document.createElement('canvas');
       this.ctx = this.canvas.getContext('2d');
       this.blocks = [];
       this.zeroBlock = [];
-      this.currentBlock = {}
+      this.currentBlock = {};
+      this.currentBlocksMap = [];
+      this.winnerBlocksResult = [];
       this.init();
     }
 
     init() {
       // this.restore();
-      this.info.blocksNumbers.length == 0 ? this.setPlayField() : this.blocksNumbers = this.info.blocksNumbers;
+      this.info.currentBlocksMap.length == 0 ? this.setCurrentBlocksMap() : this.currentBlocksMap = this.info.currentBlocksMap;
       this.setCanvas();
 
       window.addEventListener('resize', () => {
@@ -63,38 +64,25 @@ document.addEventListener('DOMContentLoaded', () => {
       })
     }
 
-    setPlayField() {
+    setCurrentBlocksMap() {
 
-      const arr = Array(this.frameSize * this.frameSize)
-        .fill().map((_, i) => i).sort(() => Math.random() - 0.5)
+      this.winnerBlocksResult = [...Array(this.frameSize * this.frameSize).keys()]
+      const arr = this.winnerBlocksResult.flat()
 
       const res = []
+
+      for (let i = arr.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
 
       while (res.length < this.frameSize) {
         res.push(arr.splice(0, this.frameSize));
       }
-      this.blocksNumbers = res;
-      // console.log(this.blocksNumbers)
-      return res
-    }
 
-    save() {
-      localStorage.setItem('info', JSON.stringify(this.info))
-      console.log('Game saved')
-    }
+      this.currentBlocksMap = res;
 
-    restore() {
-      if (localStorage.getItem('info')) {
-        this.info = JSON.parse(localStorage.getItem('info'))
-
-        this.timerElem.textContent = `${String(this.info.time.minutes).length < 2 ? 0 : ''}${this.info.time.minutes}:${String(this.info.time.seconds).length < 2 ? 0 : ''}${this.info.time.seconds}`;
-
-        this.frameSize = this.info.frameSize
-        this.frameSizeInfoElem.textContent = `${this.frameSize}x${this.frameSize}`;
-
-        this.movesElem.textContent = this.info.moves
-        // this.blocks.textContent = this.info.blocks
-      }
+      return res;
     }
 
     setCanvas() {
@@ -115,13 +103,13 @@ document.addEventListener('DOMContentLoaded', () => {
           this.ctx.fillStyle = '#e2e2e2'
           this.ctx.fillRect(0, 0, this.itemSize - 4, this.itemSize - 4);
 
-          if (this.blocksNumbers[i][j] === 0) {
+          if (this.currentBlocksMap[i][j] === 0) {
             this.ctx.fillStyle = '#fff';
             this.ctx.fillRect(0, 0, this.itemSize - 4, this.itemSize - 4);
 
             // zero block info to zeroBlock variable
             this.zeroBlock = {
-              name: this.blocksNumbers[i][j],
+              name: this.currentBlocksMap[i][j],
               x: Math.floor(j * (this.itemSize)),
               y: Math.floor(i * (this.itemSize)),
               width: Math.floor(this.itemSize),
@@ -137,13 +125,13 @@ document.addEventListener('DOMContentLoaded', () => {
             ? "12px sans-serif"
             : "20px sans-serif";
           window.innerWidth < 400 && this.frameSize > 5
-            ? this.ctx.fillText(this.blocksNumbers[i][j], this.itemSize / 2, this.itemSize / 2)
-            : this.ctx.fillText(this.blocksNumbers[i][j], this.itemSize / 2, this.itemSize / 2)
+            ? this.ctx.fillText(this.currentBlocksMap[i][j], this.itemSize / 2, this.itemSize / 2)
+            : this.ctx.fillText(this.currentBlocksMap[i][j], this.itemSize / 2, this.itemSize / 2)
           this.ctx.restore();
 
           // push new block info to blocks array
           tempBlocks.push({
-            name: this.blocksNumbers[i][j],
+            name: this.currentBlocksMap[i][j],
             x: Math.floor(j * this.itemSize),
             y: Math.floor(i * this.itemSize),
             width: Math.floor(this.itemSize),
@@ -155,46 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
           this.blocks = tempBlocks.flat()
         }
       }
-    }
-
-    message(type, str) {
-      const result = `
-      <div class="message ${type ? type : ''}">
-        <div class="message__header"><b>YOUR RESULTS</b></div>
-        <div class="message__frame-size">Frame size: ${this.frameSize}x${this.frameSize}</div>
-        <div class="message__time">Time: ${String(this.info.time.minutes).length < 2 ? 0 : ''}${this.info.time.minutes}:${String(this.info.time.seconds).length < 2 ? 0 : ''}${this.info.time.seconds}</div>
-        <div class="message__moves">Moves: ${this.info.moves}</div>
-        <div class="message__moves"><b>Best result:</b> Moves: ${this.info.best.moves} | Time: ${String(this.info.best.time.minutes).length < 2 ? 0 : ''}${this.info.best.time.minutes}:${String(this.info.best.time.seconds).length < 2 ? 0 : ''}${this.info.best.time.seconds}</div>
-        <button class="message__button">Close</button>
-      </div>`
-
-      const message = `
-      <div class="message ${type ? type : ''}">
-        <div class="message__body">${str}</div>
-        <button class="message__button">Close</button>
-      </div>`
-
-      if (document.querySelector('.message')) document.querySelector('.message').remove()
-
-      if (type == 'result') {
-        this.wrap.insertAdjacentHTML('afterbegin', result)
-      } else {
-        this.wrap.insertAdjacentHTML('afterbegin', message)
-      }
-
-
-      document.querySelector('.message__button').addEventListener('click', () => document.querySelector('.message').remove())
-
-    }
-
-    isClickOnBlock(x, y) {
-      for (let block of this.blocks) {
-        if (x >= block.x && x <= (block.x + block.width) && y >= block.y && y <= (block.y + block.height)) {
-          this.currentBlock = block
-          return true
-        }
-      }
-      return false
     }
 
     moveBlock(e) {
@@ -218,24 +166,23 @@ document.addEventListener('DOMContentLoaded', () => {
         // window.innerWidth < 400 && this.frameSize > 5
         // this.ctx.fillText(this.currentBlock.name, this.zeroBlock.x + this.itemSize / 2, this.zeroBlock.y + this.itemSize / 2)
 
-        this.blocksNumbers = this.blocksNumbers.map((arr) => {
+        this.currentBlocksMap = this.currentBlocksMap.map((arr) => {
           return arr.map(e => {
             if (e == 0) e = this.currentBlock.name
             else if (e == this.currentBlock.name) e = 0
             return e
           })
-
         })
+
 
         this.moves += 1
         this.info.moves = this.moves
         this.movesElem.textContent = this.moves
-        // console.log(this.isSolved())
-        this.setCanvas()
-        // if (!this.isSolved()) this.setCanvas()
-        // else this.gameOver()
-      }
 
+        this.setCanvas()
+        if (!this.isSolved()) this.setCanvas()
+        else this.gameOver()
+      }
 
       if (this.isClickOnBlock(x, y)) {
 
@@ -254,8 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
     start() {
       if (this.isGame == true) this.stop();
       if (document.querySelector('.message')) document.querySelector('.message').remove();
-      this.info.blocksNumbers.length = 0
-      // this.setPlayField()
+      this.info.currentBlocksMap.length = 0
       this.moves = 0
       this.setCanvas()
       this.timer();
@@ -265,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     stop() {
       clearInterval(this.isTimer);
-      this.setPlayField();
+      this.setCurrentBlocksMap();
       this.movesElem.textContent = 0;
       this.moves = 0
       this.timerElem.textContent = `00:00`;
@@ -294,13 +240,77 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 1000)
     }
 
+    message(type, str) {
+      const messages = {
+        result: `
+      <div class="message ${type ? type : ''}">
+        <div class="message__header"><b>YOUR RESULTS</b></div>
+        <div class="message__frame-size">Frame size: ${this.frameSize}x${this.frameSize}</div>
+        <div class="message__time">Time: ${String(this.info.time.minutes).length < 2 ? 0 : ''}${this.info.time.minutes}:${String(this.info.time.seconds).length < 2 ? 0 : ''}${this.info.time.seconds}</div>
+        <div class="message__moves">Moves: ${this.info.moves}</div>
+        <div class="message__moves"><b>Best result:</b> Moves: ${this.info.best.moves} | Time: ${String(this.info.best.time.minutes).length < 2 ? 0 : ''}${this.info.best.time.minutes}:${String(this.info.best.time.seconds).length < 2 ? 0 : ''}${this.info.best.time.seconds}</div>
+        <button class="message__button">Close</button>
+      </div>`,
+        winner: `
+      <div class="message ${type ? type : ''}">
+        <div class="message__header"><b>${str}</b></div>
+        <div class="message__time">Time: ${String(this.info.time.minutes).length < 2 ? 0 : ''}${this.info.time.minutes}:${String(this.info.time.seconds).length < 2 ? 0 : ''}${this.info.time.seconds}</div>
+        <div class="message__moves">Moves: ${this.info.moves}</div>
+        <div class="message__moves"><b>Best result:</b> Moves: ${this.info.best.moves} | Time: ${String(this.info.best.time.minutes).length < 2 ? 0 : ''}${this.info.best.time.minutes}:${String(this.info.best.time.seconds).length < 2 ? 0 : ''}${this.info.best.time.seconds}</div>
+        <button class="message__button">Close</button>
+      </div>`,
+        message: `
+      <div class="message ${type ? type : ''}">
+        <div class="message__body">${str}</div>
+        <button class="message__button">Close</button>
+      </div>`,
+      }
+
+      for (let key in messages) {
+        if (key == type) {
+          if (document.querySelector('.message')) document.querySelector('.message').remove()
+          this.wrap.insertAdjacentHTML('afterbegin', messages[key])
+          document.querySelector('.message__button').addEventListener('click', () => document.querySelector('.message').remove())
+        }
+      }
+    }
+
+    save() {
+      localStorage.setItem('info', JSON.stringify(this.info))
+      console.log('Game saved')
+    }
+
+    restore() {
+      if (localStorage.getItem('info')) {
+        this.info = JSON.parse(localStorage.getItem('info'))
+
+        this.timerElem.textContent = `${String(this.info.time.minutes).length < 2 ? 0 : ''}${this.info.time.minutes}:${String(this.info.time.seconds).length < 2 ? 0 : ''}${this.info.time.seconds}`;
+
+        this.frameSize = this.info.frameSize
+        this.frameSizeInfoElem.textContent = `${this.frameSize}x${this.frameSize}`;
+
+        this.movesElem.textContent = this.info.moves
+        // this.blocks.textContent = this.info.blocks
+      }
+    }
+
+    isClickOnBlock(x, y) {
+      for (let block of this.blocks) {
+        if (x >= block.x && x <= (block.x + block.width) && y >= block.y && y <= (block.y + block.height)) {
+          this.currentBlock = block
+          return true
+        }
+      }
+      return false
+    }
+
     isSolved() {
-      let res
-      this.blocksNumbers.forEach((arr, i, a) => {
-        res = arr.filter((e, i) => e == i)
-          .every((e, ind) => e == a[i][ind])
-      })
-      return res
+      const w = this.winnerBlocksResult.flat()
+      const c = this.currentBlocksMap.flat()
+      w.splice(0, 1)
+      c.splice(-1,1)
+
+      return w.every((e, i) => e == c[i])
     }
 
     gameOver() {
