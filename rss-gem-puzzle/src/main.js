@@ -62,6 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
           this.frameSize = +e.target.dataset.action;
           this.frameSizeInfoElem.textContent = `${+e.target.dataset.action}x${+e.target.dataset.action}`;
           this.info.frameSize = this.frameSize
+          this.moves = 0
+          this.movesElem.textContent = 0;
+          this.info.time.minutes = 0
+          this.info.time.seconds = 0
+          this.timerElem.textContent = `00:00`;
           this.stop();
           this.setCanvas();
         }
@@ -212,15 +217,15 @@ document.addEventListener('DOMContentLoaded', () => {
         this.movesElem.textContent = 0;
       }
 
-      if (this.info.time.minutes === 0 && this.info.time.seconds === 0  || this.isGame === true) {
+      if (this.info.time.minutes === 0 && this.info.time.seconds === 0 || this.isGame === true) {
         this.info.time.minutes = 0
         this.info.time.seconds = 0
         this.timerElem.textContent = `00:00`;
         clearInterval(this.isTimer);
       }
-      
-      // if (this.isGame === true) this.stop();
-      
+
+      if (this.isGame === true) this.setCurrentBlocksMap();
+
       this.setCanvas()
       this.setWinnerBlocksResult()
       this.timer();
@@ -230,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     stop() {
       clearInterval(this.isTimer);
-      this.setCurrentBlocksMap();
+      // this.setCurrentBlocksMap();
       this.isGame = false;
       console.log('Game stopped');
     }
@@ -249,9 +254,8 @@ document.addEventListener('DOMContentLoaded', () => {
           minutes += 1
           seconds = 0
         }
-
         seconds += 1
-        console.log(this.info.time.minutes, this.info.time.seconds,)
+
         this.timerElem.textContent = `${String(minutes).length < 2 ? 0 : ''}${minutes}:${String(seconds).length < 2 ? 0 : ''}${seconds}`
         this.info.time = { minutes, seconds }
       }, 1000)
@@ -311,6 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
         this.frameSizeInfoElem.textContent = `${this.frameSize}x${this.frameSize}`;
 
         this.movesElem.textContent = this.info.moves
+        this.moves = this.info.moves
 
         this.currentBlocksMap = this.info.blocksMap.length !== 0 ? this.info.blocksMap.slice() : false
       }
@@ -361,30 +366,6 @@ document.addEventListener('DOMContentLoaded', () => {
     frameSizeInfoElem: '.frame-size-info span',
     itemSize: 80,
   })
-
-  // draw(num, pos, elem) {
-  //   const frameSizesData = { 3: 'three', 4: 'four', 5: 'five', 6: 'six', 7: 'seven', 8: 'eight' }
-
-  //   if (!frameSizesData[num]) return gameContainerElem.insertAdjacentHTML(pos, this.message('Wrong frame size!'))
-
-  //   gameElem.setAttribute('class', `game ${frameSizesData[num]}`)
-
-  //   let random = [];
-  //   const n = num * num - 1;
-  //   while (random.length < n) {
-  //     let r = Math.floor(Math.random() * n) + 1;
-  //     if (!random.includes(r)) random.push(r);
-  //   }
-
-
-  //   const items = [...Array(num).keys()].map(i => `<div class="game__item"><span>${random[i]}</span></div>`)
-  //   return items.map((el) => elem.insertAdjacentHTML(pos, el))
-  // }
-
-
-
-
-
 })
 
 
