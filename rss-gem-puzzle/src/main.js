@@ -13,17 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
       this.timerElem = document.querySelector(this.setting.timerElem);
       this.frameSizeInfoElem = document.querySelector(this.setting.frameSizeInfoElem);
       this.frameSizeInfoElem = document.querySelector(this.setting.frameSizeInfoElem);
-      this.frameSize = 4;
-      this.moves = 0;
       this.info = {
-        frameSize: this.frameSize,
+        frameSize: 0,
         moves: 0,
-        blocks: [],
+        blocksMap: [],
+        winnerBlocksResult: [],
         time: { minutes: 0, seconds: 0 },
-        best: { time: { minutes: 0, seconds: 0 }, moves: 0, frameSize: 0, },
-        currentBlocksMap: [],
+        best: { time: { minutes: 0, seconds: 0 }, moves: 0, frameSize: 0 },
       };
+      this.frameSize = this.info.frameSize !== 0 ? this.info.frameSize : 4;
       this.itemSize = 0;
+      this.moves = 0;
       this.isGame = false;
       this.isTimer = 0;
       this.canvas = document.createElement('canvas');
@@ -37,8 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     init() {
-      // this.restore();
-      this.info.currentBlocksMap.length == 0 ? this.setCurrentBlocksMap() : this.currentBlocksMap = this.info.currentBlocksMap;
+
+      this.restore();
+
+      if (this.info.blocksMap.length === 0) this.setCurrentBlocksMap()
+      if (this.info.winnerBlocksResult.length === 0) this.setWinnerBlocksResult()
+
       this.setCanvas();
 
       window.addEventListener('resize', () => {
@@ -65,9 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     setCurrentBlocksMap() {
+      if(this.winnerBlocksResult.length === 0) this.setWinnerBlocksResult()
 
-      this.winnerBlocksResult = [...Array(this.frameSize * this.frameSize).keys()]
-      const arr = this.winnerBlocksResult.flat()
+      const arr = this.winnerBlocksResult.slice()
 
       const res = []
 
@@ -80,8 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
         res.push(arr.splice(0, this.frameSize));
       }
 
-      this.currentBlocksMap = res;
-
+      console.log(arr)
+      this.currentBlocksMap = res.slice();
+      this.info.blocksMap = res.slice()
       return res;
     }
 
@@ -176,7 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         this.moves += 1
-        this.info.moves = this.moves
         this.movesElem.textContent = this.moves
 
         this.setCanvas()
@@ -201,9 +205,11 @@ document.addEventListener('DOMContentLoaded', () => {
     start() {
       if (this.isGame == true) this.stop();
       if (document.querySelector('.message')) document.querySelector('.message').remove();
-      this.info.currentBlocksMap.length = 0
+      this.info.blocksMap.length = 0
+      this.info.winnerBlocksResult.length = 0
       this.moves = 0
       this.setCanvas()
+      this.setWinnerBlocksResult()
       this.timer();
       this.isGame = true;
       console.log('New game started');
@@ -276,6 +282,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     save() {
+      this.info.frameSize = this.frameSize
+      this.info.moves = this.moves
+      this.info.blocksMap = this.currentBlocksMap.slice()
+      this.info.winnerBlocksResult = this.winnerBlocksResult.slice()
       localStorage.setItem('info', JSON.stringify(this.info))
       console.log('Game saved')
     }
@@ -290,7 +300,8 @@ document.addEventListener('DOMContentLoaded', () => {
         this.frameSizeInfoElem.textContent = `${this.frameSize}x${this.frameSize}`;
 
         this.movesElem.textContent = this.info.moves
-        // this.blocks.textContent = this.info.blocks
+
+        this.currentBlocksMap = this.info.blocksMap.length !== 0 ? this.info.blocksMap.slice() : false
       }
     }
 
@@ -304,17 +315,27 @@ document.addEventListener('DOMContentLoaded', () => {
       return false
     }
 
+    setWinnerBlocksResult() {
+      this.winnerBlocksResult = [...Array(this.frameSize * this.frameSize).keys()]
+    }
+
     isSolved() {
-      const w = this.winnerBlocksResult.flat()
+      const w = this.winnerBlocksResult.slice()
       const c = this.currentBlocksMap.flat()
       w.splice(0, 1)
-      c.splice(-1,1)
-
+      c.splice(c.length -1, 1)
       return w.every((e, i) => e == c[i])
     }
 
     gameOver() {
-      this.message('winner', 'You winner!!!')
+      this.info.best.time.minutes = this.info.time.minutes;
+      this.info.best.time.seconds = this.info.time.seconds;
+      this.info.best.moves = this.moves;
+      this.info.best.frameSize = this.frameSize;
+
+      this.save();
+      this.message('winner', 'You winner!!!');
+      console.log('Winner!');
     }
   }
 
