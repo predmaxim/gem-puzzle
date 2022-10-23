@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     setCurrentBlocksMap() {
-      if(this.winnerBlocksResult.length === 0) this.setWinnerBlocksResult()
+      if (this.winnerBlocksResult.length === 0) this.setWinnerBlocksResult()
 
       const arr = this.winnerBlocksResult.slice()
 
@@ -203,11 +203,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     start() {
-      if (this.isGame == true) this.stop();
       if (document.querySelector('.message')) document.querySelector('.message').remove();
       this.info.blocksMap.length = 0
       this.info.winnerBlocksResult.length = 0
-      this.moves = 0
+      
+      if (this.info.moves === 0 || this.isGame === true) {
+        this.moves = 0
+        this.movesElem.textContent = 0;
+      }
+
+      if (this.info.time.minutes === 0 && this.info.time.seconds === 0  || this.isGame === true) {
+        this.info.time.minutes = 0
+        this.info.time.seconds = 0
+        this.timerElem.textContent = `00:00`;
+        clearInterval(this.isTimer);
+      }
+      
+      // if (this.isGame === true) this.stop();
+      
       this.setCanvas()
       this.setWinnerBlocksResult()
       this.timer();
@@ -218,9 +231,6 @@ document.addEventListener('DOMContentLoaded', () => {
     stop() {
       clearInterval(this.isTimer);
       this.setCurrentBlocksMap();
-      this.movesElem.textContent = 0;
-      this.moves = 0
-      this.timerElem.textContent = `00:00`;
       this.isGame = false;
       console.log('Game stopped');
     }
@@ -231,7 +241,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     timer() {
       console.log('Timer Started')
-      let minutes = 0, seconds = 0
+      let { minutes, seconds } = this.info.time
+      // let minutes = 0, seconds = 0
 
       this.isTimer = setInterval(() => {
         if (seconds == 59) {
@@ -240,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         seconds += 1
-
+        console.log(this.info.time.minutes, this.info.time.seconds,)
         this.timerElem.textContent = `${String(minutes).length < 2 ? 0 : ''}${minutes}:${String(seconds).length < 2 ? 0 : ''}${seconds}`
         this.info.time = { minutes, seconds }
       }, 1000)
@@ -323,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const w = this.winnerBlocksResult.slice()
       const c = this.currentBlocksMap.flat()
       w.splice(0, 1)
-      c.splice(c.length -1, 1)
+      c.splice(c.length - 1, 1)
       return w.every((e, i) => e == c[i])
     }
 
