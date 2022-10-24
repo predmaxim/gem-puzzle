@@ -13,15 +13,75 @@ document.addEventListener('DOMContentLoaded', () => {
       this.timerElem = document.querySelector(this.setting.timerElem);
       this.frameSizeInfoElem = document.querySelector(this.setting.frameSizeInfoElem);
       this.frameSizeInfoElem = document.querySelector(this.setting.frameSizeInfoElem);
-      this.info = {
-        frameSize: 0,
-        moves: 0,
-        blocksMap: [],
-        winnerBlocksResult: [],
-        time: { minutes: 0, seconds: 0 },
-        best: { time: { minutes: 0, seconds: 0 }, moves: 0, frameSize: 0 },
-      };
-      this.frameSize = this.info.frameSize !== 0 ? this.info.frameSize : 4;
+      this.info = [
+        {
+          id: 3,
+          time: { minutes: 0, seconds: 0 },
+          moves: 0,
+          blocksMap: [],
+          winnerBlocksResult: [],
+          best: {
+            time: { minutes: 0, seconds: 0 },
+            moves: 0,
+          },
+        },
+        {
+          id: 4,
+          time: { minutes: 0, seconds: 0 },
+          moves: 0,
+          blocksMap: [],
+          winnerBlocksResult: [],
+          best: {
+            time: { minutes: 0, seconds: 0 },
+            moves: 0,
+          },
+        },
+        {
+          id: 5,
+          time: { minutes: 0, seconds: 0 },
+          moves: 0,
+          blocksMap: [],
+          winnerBlocksResult: [],
+          best: {
+            time: { minutes: 0, seconds: 0 },
+            moves: 0,
+          },
+        },
+        {
+          id: 6,
+          time: { minutes: 0, seconds: 0 },
+          moves: 0,
+          blocksMap: [],
+          winnerBlocksResult: [],
+          best: {
+            time: { minutes: 0, seconds: 0 },
+            moves: 0,
+          },
+        },
+        {
+          id: 7,
+          time: { minutes: 0, seconds: 0 },
+          moves: 0,
+          blocksMap: [],
+          winnerBlocksResult: [],
+          best: {
+            time: { minutes: 0, seconds: 0 },
+            moves: 0,
+          },
+        },
+        {
+          id: 8,
+          time: { minutes: 0, seconds: 0 },
+          moves: 0,
+          blocksMap: [],
+          winnerBlocksResult: [],
+          best: {
+            time: { minutes: 0, seconds: 0 },
+            moves: 0,
+          },
+        },
+      ];
+      this.frameSize = this.info.filter(e => e.id == 4)[0]; //!!!!!!!!!!!!
       this.itemSize = 0;
       this.moves = 0;
       this.isGame = false;
@@ -40,14 +100,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       this.restore();
 
-      if (this.info.blocksMap.length === 0) this.setCurrentBlocksMap()
-      if (this.info.winnerBlocksResult.length === 0) this.setWinnerBlocksResult()
+      if (this.frameSize.blocksMap.length === 0) this.setCurrentBlocksMap()
+      if (this.frameSize.winnerBlocksResult.length === 0) this.setWinnerBlocksResult()
 
       this.setCanvas();
 
       window.addEventListener('resize', () => {
         if (window.innerWidth < 900) {
-          this.itemSize = Math.floor(window.innerWidth / (this.frameSize + 2))
+          this.itemSize = Math.floor(window.innerWidth / (this.frameSize.id + 2))
           this.setCanvas();
         } else this.itemSize = this.setting.itemSize
       })
@@ -59,22 +119,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target == this.saveBtn) this.save();
         if (e.target == this.resultBtn) this.result();
         if (e.target.classList.contains('frame-size')) {
-          this.frameSize = +e.target.dataset.action;
-          this.frameSizeInfoElem.textContent = `${+e.target.dataset.action}x${+e.target.dataset.action}`;
-          this.info.frameSize = this.frameSize
-          this.moves = 0
-          this.movesElem.textContent = 0;
-          this.info.time.minutes = 0
-          this.info.time.seconds = 0
-          this.timerElem.textContent = `00:00`;
+
+          let target = +e.target.dataset.action
+
+          this.frameSize = this.info.filter(e => e.id === target)[0];
+          this.frameSizeInfoElem.textContent = `${target}x${target}`;
+          this.clearMoves();
+          this.clearTimer();
           this.stop();
+          this.setCurrentBlocksMap();
           this.setCanvas();
         }
       })
     }
 
     setCurrentBlocksMap() {
-      if (this.winnerBlocksResult.length === 0) this.setWinnerBlocksResult()
+      // if (this.winnerBlocksResult.length === 0) 
+      this.setWinnerBlocksResult()
 
       const arr = this.winnerBlocksResult.slice()
 
@@ -85,29 +146,29 @@ document.addEventListener('DOMContentLoaded', () => {
         [arr[i], arr[j]] = [arr[j], arr[i]];
       }
 
-      while (res.length < this.frameSize) {
-        res.push(arr.splice(0, this.frameSize));
+      while (res.length < this.frameSize.id) {
+        res.push(arr.splice(0, this.frameSize.id));
       }
 
-      console.log(arr)
       this.currentBlocksMap = res.slice();
-      this.info.blocksMap = res.slice()
+      this.frameSize.blocksMap = res.slice()
       return res;
     }
 
     setCanvas() {
       this.itemSize = window.innerWidth < 900
-        ? Math.floor(window.innerWidth / (this.frameSize + 2))
+        ? Math.floor(window.innerWidth / (this.frameSize.id + 2))
         : this.setting.itemSize;
+
       this.canvas.classList.add('game')
-      this.canvas.width = this.frameSize * this.itemSize
+      this.canvas.width = this.frameSize.id * this.itemSize
       this.canvas.height = this.canvas.width
 
       this.wrap.insertAdjacentElement('afterbegin', this.canvas);
 
       let tempBlocks = [];
-      for (let i = 0; i < this.frameSize; i++) {
-        for (let j = 0; j < this.frameSize; j++) {
+      for (let i = 0; i < this.frameSize.id; i++) {
+        for (let j = 0; j < this.frameSize.id; j++) {
           this.ctx.save();
           this.ctx.translate(j * this.itemSize + 2, i * this.itemSize + 2);
           this.ctx.fillStyle = '#e2e2e2'
@@ -131,10 +192,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
           this.ctx.textAlign = 'center';
           this.ctx.textBaseline = 'middle';
-          this.ctx.font = window.innerWidth < 400 && this.frameSize > 5
+          this.ctx.font = window.innerWidth < 400 && this.frameSize.id > 5
             ? "12px sans-serif"
             : "20px sans-serif";
-          window.innerWidth < 400 && this.frameSize > 5
+          window.innerWidth < 400 && this.frameSize.id > 5
             ? this.ctx.fillText(this.currentBlocksMap[i][j], this.itemSize / 2, this.itemSize / 2)
             : this.ctx.fillText(this.currentBlocksMap[i][j], this.itemSize / 2, this.itemSize / 2)
           this.ctx.restore();
@@ -209,19 +270,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     start() {
       if (document.querySelector('.message')) document.querySelector('.message').remove();
-      this.info.blocksMap.length = 0
-      this.info.winnerBlocksResult.length = 0
-      
-      if (this.info.moves === 0 || this.isGame === true) {
-        this.moves = 0
-        this.movesElem.textContent = 0;
+      this.frameSize.blocksMap.length = 0;
+      this.frameSize.winnerBlocksResult.length = 0;
+
+      if (this.frameSize.moves === 0 || this.isGame === true) {
+        this.clearMoves();
       }
 
-      if (this.info.time.minutes === 0 && this.info.time.seconds === 0 || this.isGame === true) {
-        this.info.time.minutes = 0
-        this.info.time.seconds = 0
-        this.timerElem.textContent = `00:00`;
-        clearInterval(this.isTimer);
+      if (this.frameSize.time.minutes === 0 && this.frameSize.time.seconds === 0 || this.isGame === true) {
+        this.clearTimer();
       }
 
       if (this.isGame === true) this.setCurrentBlocksMap();
@@ -246,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     timer() {
       console.log('Timer Started')
-      let { minutes, seconds } = this.info.time
+      let { minutes, seconds } = this.frameSize.time
       // let minutes = 0, seconds = 0
 
       this.isTimer = setInterval(() => {
@@ -257,29 +314,45 @@ document.addEventListener('DOMContentLoaded', () => {
         seconds += 1
 
         this.timerElem.textContent = `${String(minutes).length < 2 ? 0 : ''}${minutes}:${String(seconds).length < 2 ? 0 : ''}${seconds}`
-        this.info.time = { minutes, seconds }
+        this.frameSize.time = { minutes, seconds }
       }, 1000)
     }
 
+    clearTimer() {
+      clearInterval(this.isTimer);
+      this.timerElem.textContent = `00:00`;
+      this.frameSize.time.minutes = 0;
+      this.frameSize.time.seconds = 0;
+    }
+
+    clearMoves() {
+      this.moves = 0;
+      this.movesElem.textContent = 0;
+      // this.frameSize.moves = 0;
+    }
+
     message(type, str) {
+
       const messages = {
         result: `
       <div class="message ${type ? type : ''}">
         <div class="message__header"><b>YOUR RESULTS</b></div>
-        <div class="message__frame-size">Frame size: ${this.frameSize}x${this.frameSize}</div>
-        <div class="message__time">Time: ${String(this.info.time.minutes).length < 2 ? 0 : ''}${this.info.time.minutes}:${String(this.info.time.seconds).length < 2 ? 0 : ''}${this.info.time.seconds}</div>
-        <div class="message__moves">Moves: ${this.info.moves}</div>
-        <div class="message__moves"><b>Best result:</b> Moves: ${this.info.best.moves} | Time: ${String(this.info.best.time.minutes).length < 2 ? 0 : ''}${this.info.best.time.minutes}:${String(this.info.best.time.seconds).length < 2 ? 0 : ''}${this.info.best.time.seconds}</div>
+        <div class="message__frame-size">Frame size: ${this.frameSize.id}x${this.frameSize.id}</div>
+        <div class="message__time">Time: ${String(this.frameSize.time.minutes).length < 2 ? 0 : ''}${this.frameSize.time.minutes}:${String(this.frameSize.time.seconds).length < 2 ? 0 : ''}${this.frameSize.time.seconds}</div>
+        <div class="message__moves">Moves: ${this.moves}</div>
+        <div class="message__moves"><b>Best result:</b> Moves: ${this.frameSize.best.moves} | Time: ${String(this.frameSize.best.time.minutes).length < 2 ? 0 : ''}${this.frameSize.best.time.minutes}:${String(this.frameSize.best.time.seconds).length < 2 ? 0 : ''}${this.frameSize.best.time.seconds}</div>
         <button class="message__button">Close</button>
       </div>`,
+
         winner: `
       <div class="message ${type ? type : ''}">
         <div class="message__header"><b>${str}</b></div>
-        <div class="message__time">Time: ${String(this.info.time.minutes).length < 2 ? 0 : ''}${this.info.time.minutes}:${String(this.info.time.seconds).length < 2 ? 0 : ''}${this.info.time.seconds}</div>
-        <div class="message__moves">Moves: ${this.info.moves}</div>
-        <div class="message__moves"><b>Best result:</b> Moves: ${this.info.best.moves} | Time: ${String(this.info.best.time.minutes).length < 2 ? 0 : ''}${this.info.best.time.minutes}:${String(this.info.best.time.seconds).length < 2 ? 0 : ''}${this.info.best.time.seconds}</div>
+        <div class="message__time">Time: ${String(this.frameSize.time.minutes).length < 2 ? 0 : ''}${this.frameSize.time.minutes}:${String(this.frameSize.time.seconds).length < 2 ? 0 : ''}${this.frameSize.time.seconds}</div>
+        <div class="message__moves">Moves: ${this.moves}</div>
+        <div class="message__moves"><b>Best result:</b> Moves: ${this.frameSize.best.moves} | Time: ${String(this.frameSize.best.time.minutes).length < 2 ? 0 : ''}${this.frameSize.best.time.minutes}:${String(this.frameSize.best.time.seconds).length < 2 ? 0 : ''}${this.frameSize.best.time.seconds}</div>
         <button class="message__button">Close</button>
       </div>`,
+
         message: `
       <div class="message ${type ? type : ''}">
         <div class="message__body">${str}</div>
@@ -297,10 +370,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     save() {
-      this.info.frameSize = this.frameSize
-      this.info.moves = this.moves
-      this.info.blocksMap = this.currentBlocksMap.slice()
-      this.info.winnerBlocksResult = this.winnerBlocksResult.slice()
+      this.frameSize.moves = this.moves
+      this.frameSize.blocksMap = this.currentBlocksMap.slice()
+      this.frameSize.winnerBlocksResult = this.winnerBlocksResult.slice()
       localStorage.setItem('info', JSON.stringify(this.info))
       console.log('Game saved')
     }
@@ -309,15 +381,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (localStorage.getItem('info')) {
         this.info = JSON.parse(localStorage.getItem('info'))
 
-        this.timerElem.textContent = `${String(this.info.time.minutes).length < 2 ? 0 : ''}${this.info.time.minutes}:${String(this.info.time.seconds).length < 2 ? 0 : ''}${this.info.time.seconds}`;
+        this.timerElem.textContent = `${String(this.frameSize.time.minutes).length < 2 ? 0 : ''}${this.frameSize.time.minutes}:${String(this.frameSize.time.seconds).length < 2 ? 0 : ''}${this.frameSize.time.seconds}`;
 
-        this.frameSize = this.info.frameSize
-        this.frameSizeInfoElem.textContent = `${this.frameSize}x${this.frameSize}`;
+        this.frameSizeInfoElem.textContent = `${this.frameSize.id}x${this.frameSize.id}`;
 
-        this.movesElem.textContent = this.info.moves
-        this.moves = this.info.moves
+        this.movesElem.textContent = this.frameSize.moves
+        this.moves = this.frameSize.moves
 
-        this.currentBlocksMap = this.info.blocksMap.length !== 0 ? this.info.blocksMap.slice() : false
+        this.currentBlocksMap = this.frameSize.blocksMap.length !== 0 ? this.frameSize.blocksMap.slice() : false
       }
     }
 
@@ -332,7 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     setWinnerBlocksResult() {
-      this.winnerBlocksResult = [...Array(this.frameSize * this.frameSize).keys()]
+      this.winnerBlocksResult = [...Array(this.frameSize.id * this.frameSize.id).keys()]
     }
 
     isSolved() {
@@ -344,13 +415,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     gameOver() {
-      this.info.best.time.minutes = this.info.time.minutes;
-      this.info.best.time.seconds = this.info.time.seconds;
-      this.info.best.moves = this.moves;
-      this.info.best.frameSize = this.frameSize;
+
+      this.frameSize.best.time.minutes = this.frameSize.time.minutes;
+      this.frameSize.best.time.seconds = this.frameSize.time.seconds;
+      this.frameSize.best.moves = this.moves;
 
       this.save();
-      this.message('winner', 'You winner!!!');
+      this.message('winner', 'YOU WON!!!');
       console.log('Winner!');
     }
   }
