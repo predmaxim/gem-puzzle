@@ -26,7 +26,7 @@ const devServer = (isDev) => isDev ? {
       directory: path.resolve(__dirname, 'dist'),
     },
   },
-  stats: 'errors-only'
+  // stats: 'errors-only'
 } : {}
 
 
@@ -39,7 +39,7 @@ module.exports = ({ isDev }) => ({
   }, {}),
   output: {
     path: path.resolve(__dirname, 'dist'),
-    // publicPath: '/',
+    publicPath: '/',
     filename: 'assets/js/[name].[contenthash:8].js', // output filename of JS files
     clean: true
   },
@@ -80,12 +80,16 @@ module.exports = ({ isDev }) => ({
       },
       {
         test: /\.s[ac]ss$/i,
-        exclude: /node_modules/,
-        type: "asset/resource",
-        generator: {
-          filename: "assets/css/[name][contenthash:8].css",
+        use: ['css-loader', {
+          loader: "sass-loader",
+          options: {
+            sourceMap: true,
+            sassOptions: {
+              outputStyle: "compressed",
+            },
+          },
         },
-        use: ["sass-loader"],
+        ]
       },
     ]
   },
