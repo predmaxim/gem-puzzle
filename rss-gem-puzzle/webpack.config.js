@@ -1,7 +1,7 @@
 const path = require('path');
 const PugPlugin = require('pug-plugin');
 const CompressionPlugin = require("compression-webpack-plugin");
-// const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const pages = ['index'];
 const aliases = {
@@ -39,7 +39,7 @@ module.exports = ({ isDev }) => ({
   }, {}),
   output: {
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/',
+    // publicPath: '/',
     filename: 'assets/js/[name].[contenthash:8].js', // output filename of JS files
     clean: true
   },
@@ -80,16 +80,17 @@ module.exports = ({ isDev }) => ({
       },
       {
         test: /\.s[ac]ss$/i,
-        use: ['css-loader', {
-          loader: "sass-loader",
-          options: {
-            sourceMap: true,
-            sassOptions: {
-              outputStyle: "compressed",
+        use: ['css-loader',
+          {
+            loader: "sass-loader",
+            options: {
+              sourceMap: true,
+              sassOptions: {
+                outputStyle: "compressed",
+              },
             },
           },
-        },
-        ]
+        ],
       },
     ]
   },
@@ -101,17 +102,17 @@ module.exports = ({ isDev }) => ({
     new PugPlugin({
       pretty: isDev,
       extractCss: {
-        filename: path.resolve(__dirname, 'assets/css/[name].[contenthash:8].css')
+        filename: 'assets/css/[name].[contenthash:8].css'
       },
     }),
-    // new CopyWebpackPlugin({
-    //   patterns: [
-    //     {
-    //       from: path.resolve(__dirname, 'src/favicon.ico'),
-    //       to: 'dist'
-    //     }, 
-    //   ]
-    // })
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, 'src/assets/audio/playlist/'),
+          to: './assets/audio/playlist/'
+        }, 
+      ]
+    })
   ],
   ...devServer(isDev),
 });
