@@ -1,5 +1,3 @@
-// document.addEventListener('DOMContentLoaded', () => {
-
 class Game {
 
   constructor(setting) {
@@ -81,7 +79,7 @@ class Game {
         },
       },
     ];
-    this.frameSize = this.info.filter(e => e.id == 4)[0]; //!!!!!!!!!!!!
+    this.frameSize = {}; //!!!!!!!!!!!!
     this.itemSize = 0;
     this.moves = 0;
     this.isGame = false;
@@ -93,17 +91,16 @@ class Game {
     this.currentBlock = {};
     this.currentBlocksMap = [];
     this.winnerBlocksResult = [];
+    this.restore();
     this.init();
+    this.playAudio()
   }
 
   init() {
-
-    this.restore();
-
-    if (this.frameSize.blocksMap.length === 0) this.setCurrentBlocksMap()
-    if (this.frameSize.winnerBlocksResult.length === 0) this.setWinnerBlocksResult()
-
+    this.setCurrentBlocksMap();
     this.setCanvas();
+    console.log(this.frameSize.blocksMap)
+
 
     window.addEventListener('resize', () => {
       if (window.innerWidth < 600) {
@@ -123,9 +120,10 @@ class Game {
         let target = +e.target.dataset.action
 
         this.frameSize = this.info.filter(e => e.id === target)[0];
-        this.frameSizeInfoElem.textContent = `${target}x${target}`;
-        this.clearMoves();
-        this.clearTimer();
+        // this.frameSizeInfoElem.textContent = `${target}x${target}`;
+        this.restore();
+        // this.clearMoves();
+        // this.clearTimer();
         this.stop();
         this.setCurrentBlocksMap();
         this.setCanvas();
@@ -221,6 +219,8 @@ class Game {
     const y = Math.floor(e.offsetY);
 
     const drawBlock = () => {
+      this.playAudio().play()
+
       // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       // // this.ctx.translate(this.zeroBlock.x, this.zeroBlock.y);
 
@@ -252,6 +252,7 @@ class Game {
       this.setCanvas()
       if (!this.isSolved()) this.setCanvas()
       else this.gameOver()
+
     }
 
     if (this.isClickOnBlock(x, y)) {
@@ -384,6 +385,9 @@ class Game {
 
   restore() {
     if (localStorage.getItem('info')) {
+
+      if (Object.keys(this.frameSize).length == 0) this.frameSize = this.info.filter(e => e.id == 4)[0];
+
       this.info = JSON.parse(localStorage.getItem('info'))
 
       this.timerElem.textContent = `${String(this.frameSize.time.minutes).length < 2 ? 0 : ''}${this.frameSize.time.minutes}:${String(this.frameSize.time.seconds).length < 2 ? 0 : ''}${this.frameSize.time.seconds}`;
@@ -392,8 +396,10 @@ class Game {
 
       this.movesElem.textContent = this.frameSize.moves
       this.moves = this.frameSize.moves
+      // this.setCurrentBlocksMap();
 
-      this.currentBlocksMap = this.frameSize.blocksMap.length !== 0 ? this.frameSize.blocksMap.slice() : false
+      this.currentBlocksMap = this.frameSize.blocksMap.length !== 0 ? this.frameSize.blocksMap.slice() : this.setCurrentBlocksMap();
+      this.winnerBlocksResult = this.frameSize.winnerBlocksResult
     }
   }
 
@@ -429,20 +435,13 @@ class Game {
     this.message('winner', 'YOU WON!!!');
     console.log('Winner!');
   }
+
+  playAudio() {
+    const a = new Audio('../assets/audio/adriantnt_u_click.mp3');
+    return a
+  }
 }
 
-const game = new Game({
-  wrap: '.game-container',
-  startBtn: '.start',
-  stopBtn: '.stop',
-  saveBtn: '.save',
-  resultBtn: '.result',
-  timerElem: '.timer span',
-  moves: '.moves span',
-  frameSizeInfoElem: '.frame-size-info span',
-  itemSize: 80,
-})
-// })
 
 export default Game;
 
