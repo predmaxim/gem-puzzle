@@ -94,6 +94,7 @@ class Game {
   }
 
   init() {
+    this.alert()
     this.restore(this.defaultFSid);
     this.setCanvas();
     this.playAudio();
@@ -509,6 +510,16 @@ class Game {
 
   playAudio() {
     return new Audio('./assets/adriantnt_u_click.mp3');
+  }
+
+  alert() {
+    alert(`
+    Привет!
+    Не сделано: 
+    - анимация движения плиток: -15
+    - плитки можно перетаскивать: -15
+    Итого: 90
+    `)
   }
 }
 
