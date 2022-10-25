@@ -193,30 +193,31 @@ class Game {
     }
   }
 
+  getRandomBlocks(fs) {
+    const s = this.info.filter(e => e.id == fs)[0]
+
+    const arr = s.winnerBlocksResult.slice()
+
+    const res = []
+
+    for (let i = arr.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+
+    while (res.length < s.id) {
+      res.push(arr.splice(0, s.id));
+    }
+
+    return res;
+  }
+
   setCurrentBlocksMap(fs) {
     if (this.info.filter(e => e.id == fs)[0].blocksMap.length === 0) {
 
-      const s = this.info.filter(e => e.id == fs)[0]
-
-      const arr = s.winnerBlocksResult.slice()
-
-      const res = []
-
-      for (let i = arr.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-
-      while (res.length < s.id) {
-        res.push(arr.splice(0, s.id));
-      }
-
-      this.frameSize.blocksMap = res.slice();
+      this.frameSize.blocksMap = this.getRandomBlocks(fs).slice()
 
     } else this.frameSize.blocksMap = this.info.filter(e => e.id == fs)[0].blocksMap.slice()
-
-
-
   }
 
   setCanvas() {
@@ -330,7 +331,8 @@ class Game {
       this.minutes = 0;
       this.seconds = 0;
 
-      this.setCurrentBlocksMap();
+      this.frameSize.blocksMap = this.getRandomBlocks(this.frameSize.id).slice()
+      // setCurrentBlocksMap(this.frameSize.id)
       this.setCanvas()
     }
 
