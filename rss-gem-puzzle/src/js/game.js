@@ -2,85 +2,84 @@ class Game {
 
   constructor(setting) {
     this.setting = setting;
-    this.movesElem = document.querySelector(this.setting.moves);
-    this.wrap = document.querySelector(this.setting.wrap);
-    this.startBtn = document.querySelector(this.setting.startBtn);
-    this.stopBtn = document.querySelector(this.setting.stopBtn);
-    this.saveBtn = document.querySelector(this.setting.saveBtn);
-    this.resultBtn = document.querySelector(this.setting.resultBtn);
-    this.timerElem = document.querySelector(this.setting.timerElem);
-    this.frameSizeInfoElem = document.querySelector(this.setting.frameSizeInfoElem);
-    this.frameSizeInfoElem = document.querySelector(this.setting.frameSizeInfoElem);
     this.info = [
       {
         id: 3,
         time: { minutes: 0, seconds: 0 },
         moves: 0,
         blocksMap: [],
-        winnerBlocksResult: [],
+        winnerBlocksResult: [...Array(9).keys()],
         best: {
           time: { minutes: 0, seconds: 0 },
           moves: 0,
         },
+        last: false
       },
       {
         id: 4,
         time: { minutes: 0, seconds: 0 },
         moves: 0,
         blocksMap: [],
-        winnerBlocksResult: [],
+        winnerBlocksResult: [...Array(16).keys()],
         best: {
           time: { minutes: 0, seconds: 0 },
           moves: 0,
         },
+        last: false
       },
       {
         id: 5,
         time: { minutes: 0, seconds: 0 },
         moves: 0,
         blocksMap: [],
-        winnerBlocksResult: [],
+        winnerBlocksResult: [...Array(25).keys()],
         best: {
           time: { minutes: 0, seconds: 0 },
           moves: 0,
         },
+        last: false
       },
       {
         id: 6,
         time: { minutes: 0, seconds: 0 },
         moves: 0,
         blocksMap: [],
-        winnerBlocksResult: [],
+        winnerBlocksResult: [...Array(36).keys()],
         best: {
           time: { minutes: 0, seconds: 0 },
           moves: 0,
         },
+        last: false
       },
       {
         id: 7,
         time: { minutes: 0, seconds: 0 },
         moves: 0,
         blocksMap: [],
-        winnerBlocksResult: [],
+        winnerBlocksResult: [...Array(49).keys()],
         best: {
           time: { minutes: 0, seconds: 0 },
           moves: 0,
         },
+        last: false
       },
       {
         id: 8,
         time: { minutes: 0, seconds: 0 },
         moves: 0,
         blocksMap: [],
-        winnerBlocksResult: [],
+        winnerBlocksResult: [...Array(64).keys()],
         best: {
           time: { minutes: 0, seconds: 0 },
           moves: 0,
         },
+        last: false
       },
     ];
-    this.frameSize = {}; //!!!!!!!!!!!!
-    this.itemSize = 0;
+    this.defaultFSid = 4;
+    this.itemSize = 80;
+    this.minutes = 0;
+    this.seconds = 0;
     this.moves = 0;
     this.isGame = false;
     this.isTimer = 0;
@@ -89,24 +88,22 @@ class Game {
     this.blocks = [];
     this.zeroBlock = [];
     this.currentBlock = {};
-    this.currentBlocksMap = [];
-    this.winnerBlocksResult = [];
-    this.restore();
+    this.createPage();
     this.init();
-    this.playAudio()
   }
 
   init() {
-    this.setCurrentBlocksMap();
+    this.restore(this.defaultFSid);
+    console.log(this.frameSize)
+    // this.setCurrentBlocksMap(this.frameSize.id)
     this.setCanvas();
-    console.log(this.frameSize.blocksMap)
-
+    this.playAudio();
 
     window.addEventListener('resize', () => {
       if (window.innerWidth < 600) {
         this.itemSize = Math.floor(window.innerWidth / (this.frameSize.id + 2))
         this.setCanvas();
-      } else this.itemSize = this.setting.itemSize
+      } else if (window.innerWidth >= 600) this.itemSize = 80
     })
 
     document.addEventListener('click', (e) => {
@@ -117,40 +114,109 @@ class Game {
       if (e.target == this.resultBtn) this.result();
       if (e.target.classList.contains('frame-size')) {
 
-        let target = +e.target.dataset.action
-
-        this.frameSize = this.info.filter(e => e.id === target)[0];
-        // this.frameSizeInfoElem.textContent = `${target}x${target}`;
-        this.restore();
-        // this.clearMoves();
-        // this.clearTimer();
         this.stop();
-        this.setCurrentBlocksMap();
+        this.clearMoves();
+        this.clearTimer();
+
+
+        this.restore(+e.target.dataset.action);
+        // this.setCurrentBlocksMap(+e.target.dataset.action)
+
         this.setCanvas();
+        this.frameSizeInfoElem.textContent = `${this.frameSize.id}x${this.frameSize.id}`
       }
     })
   }
 
-  setCurrentBlocksMap() {
-    // if (this.winnerBlocksResult.length === 0) 
-    this.setWinnerBlocksResult()
+  createPage() {
+    if (!document.querySelector('container')) {
 
-    const arr = this.winnerBlocksResult.slice()
+      const container = document.createElement('div')
+      container.className = 'container'
+      document.body.prepend(container)
 
-    const res = []
+      let h1 = document.createElement('h1')
+      h1.textContent = 'RSS Gem Puzzle'
+      container.prepend(h1)
 
-    for (let i = arr.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
+      let buttons = document.createElement('div')
+      buttons.className = 'buttons'
+      container.append(buttons)
+
+      for (let button of ['start', 'stop', 'save', 'result']) {
+        let b = document.createElement('button')
+        b.className = `${button}`
+        b.textContent = `${button}`
+        buttons.append(b)
+      }
+
+      let currentInfo = document.createElement('div')
+      currentInfo.className = 'current-info'
+      container.append(currentInfo)
+
+      currentInfo.insertAdjacentHTML('afterbegin', '<div class="timer">Time: <span>00:00</span></div>')
+      currentInfo.insertAdjacentHTML('afterbegin', '<div class="moves">Moves: <span>0</span></div>')
+
+      let gameContainer = document.createElement('div')
+      gameContainer.className = 'game-container'
+      container.append(gameContainer)
+
+      let frameSizeInfo = document.createElement('div')
+      frameSizeInfo.className = 'frame-size-info'
+      container.append(frameSizeInfo)
+
+      frameSizeInfo.insertAdjacentHTML('afterbegin', 'Frame size: <span></span></div>')
+
+      let otherFrameSizes = document.createElement('div')
+      otherFrameSizes.className = 'other-frame-sizes'
+      container.append(otherFrameSizes)
+
+      otherFrameSizes.innerHTML += 'Other sizes:'
+
+      for (let frameSize of this.info) {
+        let a = document.createElement('a')
+        a.href = '#'
+        a.className = `frame-size`
+        a.setAttribute('data-action', `${frameSize.id}`)
+        a.textContent = `${frameSize.id}x${frameSize.id}`
+        otherFrameSizes.append(a)
+      }
+
+      this.movesElem = document.querySelector('.moves span')
+      this.wrap = gameContainer
+      this.startBtn = document.querySelector('.start')
+      this.stopBtn = document.querySelector('.stop');
+      this.saveBtn = document.querySelector('.save');
+      this.resultBtn = document.querySelector('.result');
+      this.timerElem = document.querySelector('.timer span');
+      this.frameSizeInfoElem = document.querySelector('.frame-size-info span');
     }
+  }
 
-    while (res.length < this.frameSize.id) {
-      res.push(arr.splice(0, this.frameSize.id));
-    }
+  setCurrentBlocksMap(fs) {
+    if (this.info.filter(e => e.id == fs)[0].blocksMap.length === 0) {
 
-    this.currentBlocksMap = res.slice();
-    this.frameSize.blocksMap = res.slice()
-    return res;
+      const s = this.info.filter(e => e.id == fs)[0]
+
+      const arr = s.winnerBlocksResult.slice()
+
+      const res = []
+
+      for (let i = arr.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+
+      while (res.length < s.id) {
+        res.push(arr.splice(0, s.id));
+      }
+
+      this.frameSize.blocksMap = res.slice();
+
+    } else this.frameSize.blocksMap = this.info.filter(e => e.id == fs)[0].blocksMap.slice()
+
+
+
   }
 
   setCanvas() {
@@ -172,13 +238,13 @@ class Game {
         this.ctx.fillStyle = '#e2e2e2'
         this.ctx.fillRect(0, 0, this.itemSize - 4, this.itemSize - 4);
 
-        if (this.currentBlocksMap[i][j] === 0) {
+        if (this.frameSize.blocksMap[i][j] === 0) {
           this.ctx.fillStyle = '#fff';
           this.ctx.fillRect(0, 0, this.itemSize - 4, this.itemSize - 4);
 
           // zero block info to zeroBlock variable
           this.zeroBlock = {
-            name: this.currentBlocksMap[i][j],
+            name: this.frameSize.blocksMap[i][j],
             x: Math.floor(j * (this.itemSize)),
             y: Math.floor(i * (this.itemSize)),
             width: Math.floor(this.itemSize),
@@ -194,13 +260,13 @@ class Game {
           ? "12px sans-serif"
           : "20px sans-serif";
         window.innerWidth < 400 && this.frameSize.id > 5
-          ? this.ctx.fillText(this.currentBlocksMap[i][j], this.itemSize / 2, this.itemSize / 2)
-          : this.ctx.fillText(this.currentBlocksMap[i][j], this.itemSize / 2, this.itemSize / 2)
+          ? this.ctx.fillText(this.frameSize.blocksMap[i][j], this.itemSize / 2, this.itemSize / 2)
+          : this.ctx.fillText(this.frameSize.blocksMap[i][j], this.itemSize / 2, this.itemSize / 2)
         this.ctx.restore();
 
         // push new block info to blocks array
         tempBlocks.push({
-          name: this.currentBlocksMap[i][j],
+          name: this.frameSize.blocksMap[i][j],
           x: Math.floor(j * this.itemSize),
           y: Math.floor(i * this.itemSize),
           width: Math.floor(this.itemSize),
@@ -208,6 +274,7 @@ class Game {
           row: i + 1,
           col: j + 1,
         })
+
         this.blocks.length = 0
         this.blocks = tempBlocks.flat()
       }
@@ -221,23 +288,7 @@ class Game {
     const drawBlock = () => {
       this.playAudio().play()
 
-      // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      // // this.ctx.translate(this.zeroBlock.x, this.zeroBlock.y);
-
-      // this.ctx.fillStyle = '#e2e2e2'
-      // this.ctx.rect(this.zeroBlock.x, this.zeroBlock.y, this.currentBlock.width, this.currentBlock.height);
-      // this.ctx.fill()
-
-      // this.ctx.fillStyle = '#000'
-      // this.ctx.textAlign = 'center';
-      // this.ctx.textBaseline = 'middle';
-      // this.ctx.font = window.innerWidth < 400 && this.frameSize > 5
-      //   ? "12px sans-serif"
-      //   : "20px sans-serif";
-      // window.innerWidth < 400 && this.frameSize > 5
-      // this.ctx.fillText(this.currentBlock.name, this.zeroBlock.x + this.itemSize / 2, this.zeroBlock.y + this.itemSize / 2)
-
-      this.currentBlocksMap = this.currentBlocksMap.map((arr) => {
+      this.frameSize.blocksMap = this.frameSize.blocksMap.map((arr) => {
         return arr.map(e => {
           if (e == 0) e = this.currentBlock.name
           else if (e == this.currentBlock.name) e = 0
@@ -271,32 +322,27 @@ class Game {
 
   start() {
     document.querySelector('.start').classList.add('active')
-
     if (document.querySelector('.message')) document.querySelector('.message').remove();
-    this.frameSize.blocksMap.length = 0;
-    this.frameSize.winnerBlocksResult.length = 0;
 
-    if (this.frameSize.moves === 0 || this.isGame === true) {
+    if (this.isGame === true) {
       this.clearMoves();
-    }
-
-    if (this.frameSize.time.minutes === 0 && this.frameSize.time.seconds === 0 || this.isGame === true) {
       this.clearTimer();
-    }
+      this.minutes = 0;
+      this.seconds = 0;
 
-    if (this.isGame === true) this.setCurrentBlocksMap();
+      this.setCurrentBlocksMap();
+      this.setCanvas()
+    }
 
     this.setCanvas()
-    this.setWinnerBlocksResult()
     this.timer();
     this.isGame = true;
-    console.log('New game started');
+    console.log('Game started');
   }
 
   stop() {
     document.querySelector('.start').classList.remove('active')
     clearInterval(this.isTimer);
-    // this.setCurrentBlocksMap();
     this.isGame = false;
     console.log('Game stopped');
   }
@@ -308,18 +354,15 @@ class Game {
 
   timer() {
     console.log('Timer Started')
-    let { minutes, seconds } = this.frameSize.time
-    // let minutes = 0, seconds = 0
 
     this.isTimer = setInterval(() => {
-      if (seconds == 59) {
-        minutes += 1
-        seconds = 0
+      if (this.seconds == 59) {
+        this.minutes += 1
+        this.seconds = 0
       }
-      seconds += 1
+      this.seconds += 1
 
-      this.timerElem.textContent = `${String(minutes).length < 2 ? 0 : ''}${minutes}:${String(seconds).length < 2 ? 0 : ''}${seconds}`
-      this.frameSize.time = { minutes, seconds }
+      this.timerElem.textContent = `${String(this.minutes).length < 2 ? 0 : ''}${this.minutes}:${String(this.seconds).length < 2 ? 0 : ''}${this.seconds}`
     }, 1000)
   }
 
@@ -376,31 +419,49 @@ class Game {
   }
 
   save() {
-    this.frameSize.moves = this.moves
-    this.frameSize.blocksMap = this.currentBlocksMap.slice()
-    this.frameSize.winnerBlocksResult = this.winnerBlocksResult.slice()
+    const s = this.info.filter(e => e.id == this.frameSize.id)[0]
+
+    s.moves = this.moves
+    s.time.minutes = this.minutes
+    s.time.seconds = this.seconds
+    s.blocksMap = this.frameSize.blocksMap
+
+    if (this.isSolved()) {
+      s.best.time.minutes = this.time.minutes;
+      s.best.time.seconds = this.time.seconds;
+      s.best.moves = this.moves;
+    }
+
+
     localStorage.setItem('info', JSON.stringify(this.info))
     console.log('Game saved')
   }
 
-  restore() {
-    if (localStorage.getItem('info')) {
+  getFrameSize(fs) {
+    return JSON.parse(JSON.stringify(this.info.filter(e => e.id === fs)[0]))
+  }
 
-      if (Object.keys(this.frameSize).length == 0) this.frameSize = this.info.filter(e => e.id == 4)[0];
+  setFrameSize(fs) {
 
-      this.info = JSON.parse(localStorage.getItem('info'))
+    if (this.frameSize) this.info.filter(e => e.id === this.frameSize.id)[0].last = false
+    this.info.filter(e => e.id === fs)[0].last = true
+    this.frameSize = this.getFrameSize(fs)
 
-      this.timerElem.textContent = `${String(this.frameSize.time.minutes).length < 2 ? 0 : ''}${this.frameSize.time.minutes}:${String(this.frameSize.time.seconds).length < 2 ? 0 : ''}${this.frameSize.time.seconds}`;
+  }
 
-      this.frameSizeInfoElem.textContent = `${this.frameSize.id}x${this.frameSize.id}`;
+  restore(fs) {
 
-      this.movesElem.textContent = this.frameSize.moves
-      this.moves = this.frameSize.moves
-      // this.setCurrentBlocksMap();
+    if (localStorage.getItem('info')) this.info = JSON.parse(localStorage.getItem('info'))
 
-      this.currentBlocksMap = this.frameSize.blocksMap.length !== 0 ? this.frameSize.blocksMap.slice() : this.setCurrentBlocksMap();
-      this.winnerBlocksResult = this.frameSize.winnerBlocksResult
-    }
+    const s = this.info.filter(e => e.id == fs)[0]
+    this.setFrameSize(fs)
+    this.setCurrentBlocksMap(fs)
+
+    this.timerElem.textContent = `${String(this.frameSize.time.minutes).length < 2 ? 0 : ''}${this.frameSize.time.minutes}:${String(this.frameSize.time.seconds).length < 2 ? 0 : ''}${this.frameSize.time.seconds}`;
+    this.moves = this.frameSize.moves
+    this.movesElem.textContent = this.frameSize.moves
+    this.frameSizeInfoElem.textContent = `${this.frameSize.id}x${this.frameSize.id}`;
+
   }
 
   isClickOnBlock(x, y) {
@@ -413,32 +474,23 @@ class Game {
     return false
   }
 
-  setWinnerBlocksResult() {
-    this.winnerBlocksResult = [...Array(this.frameSize.id * this.frameSize.id).keys()]
-  }
 
   isSolved() {
-    const w = this.winnerBlocksResult.slice()
-    const c = this.currentBlocksMap.flat()
+    const w = this.frameSize.winnerBlocksResult.slice()
+    const c = this.frameSize.blocksMap.flat()
     w.splice(0, 1)
     c.splice(c.length - 1, 1)
     return w.every((e, i) => e == c[i])
   }
 
   gameOver() {
-
-    this.frameSize.best.time.minutes = this.frameSize.time.minutes;
-    this.frameSize.best.time.seconds = this.frameSize.time.seconds;
-    this.frameSize.best.moves = this.moves;
-
     this.save();
     this.message('winner', 'YOU WON!!!');
     console.log('Winner!');
   }
 
   playAudio() {
-    const a = new Audio('../assets/audio/adriantnt_u_click.mp3');
-    return a
+    return new Audio('../assets/audio/adriantnt_u_click.mp3');
   }
 }
 
