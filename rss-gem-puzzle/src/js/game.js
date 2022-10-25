@@ -221,9 +221,10 @@ class Game {
   }
 
   setCanvas() {
-    this.itemSize = window.innerWidth < 600
-      ? Math.floor(window.innerWidth / (this.frameSize.id + 2))
-      : this.setting.itemSize;
+    if (window.innerWidth < 600) {
+      this.itemSize = Math.floor(window.innerWidth / (this.frameSize.id + 2))
+      this.setCanvas();
+    } else if (window.innerWidth >= 600) this.itemSize = 80
 
     this.canvas.classList.add('game')
     this.canvas.width = this.frameSize.id * this.itemSize
