@@ -122,9 +122,8 @@ class Game {
           this.sound.muted = true
           document.querySelector('.sound img').src = './assets/sound_off_icon.svg'
         }
-        // this.sound = this.playAudio().muted;
 
-        // console.log(this.playAudio().muted)
+        this.soundBtn.classList.toggle('active')
       }
 
       if (e.target.classList.contains('frame-size')) {
@@ -347,7 +346,7 @@ class Game {
   }
 
   start() {
-    document.querySelector('.start').classList.add('active')
+    this.startBtn.classList.add('active')
     if (document.querySelector('.message')) document.querySelector('.message').remove();
 
     if (this.isGame === true) {
