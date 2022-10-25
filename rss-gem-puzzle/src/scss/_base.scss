@@ -23,7 +23,7 @@ main {
   padding: 30px;
 
   @media screen and (max-width: 768px) {
-    flex-direction: column;    
+    flex-direction: column;
     padding: 0;
   }
 }
@@ -79,6 +79,13 @@ h1 {
     margin-right: 5px;
   }
 
+  .sound {
+    padding: 5px 14px;
+    img {
+      width: 15px;
+    }
+  }
+
   button {
     padding: 10px 14px;
     background: #0075da;
@@ -92,7 +99,8 @@ h1 {
       padding: 10px 8px;
     }
 
-    &:hover, &.active {
+    &:hover,
+    &.active {
       background: #9c9c9c;
     }
   }
@@ -140,7 +148,7 @@ h1 {
 .other-frame-sizes {
   .frame-size {
     margin-left: 10px;
-  margin-bottom: 10px;
-  display: inline-block;
+    margin-bottom: 10px;
+    display: inline-block;
   }
 }

@@ -115,6 +115,14 @@ module.exports = ({ isDev }) => ({
           from: path.resolve(__dirname, 'src/assets/favicon.ico'),
           to: './assets/'
         }, 
+        {
+          from: path.resolve(__dirname, 'src/assets/sound_on_icon.svg'),
+          to: './assets/'
+        },
+        {
+          from: path.resolve(__dirname, 'src/assets/sound_off_icon.svg'),
+          to: './assets/'
+        },
       ]
     })
   ],

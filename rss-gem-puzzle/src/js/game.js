@@ -88,6 +88,7 @@ class Game {
     this.blocks = [];
     this.zeroBlock = [];
     this.currentBlock = {};
+    this.sound = this.playAudio();
     this.createPage();
     this.init();
   }
@@ -112,6 +113,20 @@ class Game {
       if (e.target == this.stopBtn) this.stop();
       if (e.target == this.saveBtn) this.save();
       if (e.target == this.resultBtn) this.result();
+      if (e.target == this.soundBtn || e.target == document.querySelector('.sound img')) {
+
+        if (this.sound.muted) {
+          document.querySelector('.sound img').src = './assets/sound_on_icon.svg'
+          this.sound.muted = false
+        } else {
+          this.sound.muted = true
+          document.querySelector('.sound img').src = './assets/sound_off_icon.svg'
+        }
+        // this.sound = this.playAudio().muted;
+
+        // console.log(this.playAudio().muted)
+      }
+
       if (e.target.classList.contains('frame-size')) {
 
         this.stop();
@@ -149,6 +164,14 @@ class Game {
         b.textContent = `${button}`
         buttons.append(b)
       }
+
+      let sound = document.createElement('button')
+      sound.className = 'sound'
+      buttons.append(sound)
+      let soundImg = document.createElement('img')
+      soundImg.src = './assets/sound_on_icon.svg'
+      soundImg.setAttribute('alt', 'sound')
+      sound.append(soundImg)
 
       let currentInfo = document.createElement('div')
       currentInfo.className = 'current-info'
@@ -188,6 +211,7 @@ class Game {
       this.stopBtn = document.querySelector('.stop');
       this.saveBtn = document.querySelector('.save');
       this.resultBtn = document.querySelector('.result');
+      this.soundBtn = document.querySelector('.sound');
       this.timerElem = document.querySelector('.timer span');
       this.frameSizeInfoElem = document.querySelector('.frame-size-info span');
     }
@@ -288,7 +312,7 @@ class Game {
     const y = Math.floor(e.offsetY);
 
     const drawBlock = () => {
-      this.playAudio().play()
+      if (!this.sound.muted) this.sound.play()
 
       this.frameSize.blocksMap = this.frameSize.blocksMap.map((arr) => {
         return arr.map(e => {
@@ -493,7 +517,7 @@ class Game {
   }
 
   playAudio() {
-    return new Audio('./assets/audio/adriantnt_u_click.mp3');
+    return new Audio('../assets/audio/adriantnt_u_click.mp3');
   }
 }
 
