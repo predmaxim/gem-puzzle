@@ -95,8 +95,6 @@ class Game {
 
   init() {
     this.restore(this.defaultFSid);
-    console.log(this.frameSize)
-    // this.setCurrentBlocksMap(this.frameSize.id)
     this.setCanvas();
     this.playAudio();
 
@@ -104,7 +102,7 @@ class Game {
       if (window.innerWidth < 600) {
         this.itemSize = Math.floor(window.innerWidth / (this.frameSize.id + 2))
         this.setCanvas();
-      } else if (window.innerWidth >= 600) this.itemSize = 80
+      } else this.itemSize = 80
     })
 
     document.addEventListener('click', (e) => {
@@ -127,14 +125,11 @@ class Game {
       }
 
       if (e.target.classList.contains('frame-size')) {
-
         this.stop();
         this.clearMoves();
         this.clearTimer();
 
-
         this.restore(+e.target.dataset.action);
-        // this.setCurrentBlocksMap(+e.target.dataset.action)
 
         this.setCanvas();
         this.frameSizeInfoElem.textContent = `${this.frameSize.id}x${this.frameSize.id}`
@@ -244,10 +239,6 @@ class Game {
   }
 
   setCanvas() {
-    if (window.innerWidth < 600) {
-      this.itemSize = Math.floor(window.innerWidth / (this.frameSize.id + 2))
-      this.setCanvas();
-    } else if (window.innerWidth >= 600) this.itemSize = 80
 
     this.canvas.classList.add('game')
     this.canvas.width = this.frameSize.id * this.itemSize
@@ -349,15 +340,13 @@ class Game {
     this.startBtn.classList.add('active')
     if (document.querySelector('.message')) document.querySelector('.message').remove();
 
+    this.minutes = this.frameSize.time.minutes
+    this.seconds = this.frameSize.time.seconds
+
     if (this.isGame === true) {
       this.clearMoves();
       this.clearTimer();
-      this.minutes = 0;
-      this.seconds = 0;
-
       this.frameSize.blocksMap = this.getRandomBlocks(this.frameSize.id).slice()
-      // setCurrentBlocksMap(this.frameSize.id)
-      this.setCanvas()
     }
 
     this.setCanvas()
@@ -367,7 +356,7 @@ class Game {
   }
 
   stop() {
-    document.querySelector('.start').classList.remove('active')
+    this.startBtn.classList.remove('active')
     clearInterval(this.isTimer);
     this.isGame = false;
     console.log('Game stopped');
@@ -388,6 +377,9 @@ class Game {
       }
       this.seconds += 1
 
+      this.frameSize.time.minutes = this.minutes
+      this.frameSize.time.seconds = this.seconds
+
       this.timerElem.textContent = `${String(this.minutes).length < 2 ? 0 : ''}${this.minutes}:${String(this.seconds).length < 2 ? 0 : ''}${this.seconds}`
     }, 1000)
   }
@@ -395,8 +387,8 @@ class Game {
   clearTimer() {
     clearInterval(this.isTimer);
     this.timerElem.textContent = `00:00`;
-    this.frameSize.time.minutes = 0;
-    this.frameSize.time.seconds = 0;
+    this.minutes = 0;
+    this.seconds = 0;
   }
 
   clearMoves() {
