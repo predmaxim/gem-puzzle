@@ -517,7 +517,7 @@ class Game {
   }
 
   playAudio() {
-    return new Audio('../assets/audio/adriantnt_u_click.mp3');
+    return new Audio('./assets/adriantnt_u_click.mp3');
   }
 }
 

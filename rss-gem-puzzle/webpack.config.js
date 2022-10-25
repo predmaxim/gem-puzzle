@@ -108,12 +108,12 @@ module.exports = ({ isDev }) => ({
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, 'src/assets/audio/'),
-          to: './assets/audio/'
+          from: path.resolve(__dirname, 'src/assets/adriantnt_u_click.mp3'),
+          to: './assets/'
         }, 
         {
-          from: path.resolve(__dirname, 'src/assets/favicon.ico'),
-          to: './assets/'
+          from: path.resolve(__dirname, 'src/favicon.ico'),
+          to: './'
         }, 
         {
           from: path.resolve(__dirname, 'src/assets/sound_on_icon.svg'),
