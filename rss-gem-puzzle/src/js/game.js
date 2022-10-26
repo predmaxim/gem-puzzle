@@ -1,6 +1,6 @@
 class Game {
 
-  constructor(setting) {
+  constructor() {
     this.info = [];
     this.defaultFSid = 4;
     this.itemSize = 80;
