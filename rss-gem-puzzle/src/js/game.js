@@ -42,12 +42,7 @@ class Game {
     this.setCanvas();
     this.playAudio();
 
-    window.addEventListener('resize', () => {
-      if (window.innerWidth < 600) {
-        this.itemSize = Math.floor(window.innerWidth / (this.frameSize.id + 2))
-        this.setCanvas();
-      } else this.itemSize = 80
-    })
+  
 
     document.addEventListener('click', (e) => {
       if (e.target == this.canvas && this.isGame) this.moveBlock(e);
@@ -69,6 +64,7 @@ class Game {
       }
 
       if (e.target.classList.contains('frame-size')) {
+
         this.stop();
         this.clearMoves();
         this.clearTimer();
@@ -216,9 +212,7 @@ class Game {
 
         this.ctx.textAlign = 'center';
         this.ctx.textBaseline = 'middle';
-        this.ctx.font = window.innerWidth < 400 && this.frameSize.id > 5
-          ? "12px sans-serif"
-          : "20px sans-serif";
+        this.ctx.font = "20px sans-serif";
         window.innerWidth < 400 && this.frameSize.id > 5
           ? this.ctx.fillText(this.frameSize.blocksMap[i][j], this.itemSize / 2, this.itemSize / 2)
           : this.ctx.fillText(this.frameSize.blocksMap[i][j], this.itemSize / 2, this.itemSize / 2)
