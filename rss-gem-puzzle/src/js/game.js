@@ -42,7 +42,7 @@ class Game {
     this.setCanvas();
     this.playAudio();
 
-  
+
 
     document.addEventListener('click', (e) => {
       if (e.target == this.canvas && this.isGame) this.moveBlock(e);
@@ -252,6 +252,7 @@ class Game {
 
 
       this.moves += 1
+      this.frameSize.moves = this.moves
       this.movesElem.textContent = this.moves
 
       this.setCanvas()
@@ -375,18 +376,25 @@ class Game {
   }
 
   save() {
-    const s = this.info.filter(e => e.id == this.frameSize.id)[0]
-
-    s.moves = this.moves
-    s.time.minutes = this.minutes
-    s.time.seconds = this.seconds
-    s.blocksMap = this.frameSize.blocksMap
 
     if (this.isSolved()) {
-      s.best.time.minutes = this.time.minutes;
-      s.best.time.seconds = this.time.seconds;
-      s.best.moves = this.moves;
+      if (this.frameSize.best.moves === 0) {
+        this.frameSize.best.moves = this.moves
+        this.frameSize.best.time.minutes = this.minutes
+        this.frameSize.best.time.seconds = this.seconds
+      } else if (this.moves < this.frameSize.best.moves) {
+        this.frameSize.best.moves = this.moves
+        this.frameSize.best.time.minutes = this.minutes
+        this.frameSize.best.time.seconds = this.seconds
+      }
     }
+
+
+
+    const i = this.info.reduce((acc, e, i) => e.id === this.frameSize.id ? acc += i : acc, 0)
+    this.info[i] = JSON.parse(JSON.stringify(this.frameSize));
+
+    console.log(this.info[i], this.frameSize)
 
 
     localStorage.setItem('info', JSON.stringify(this.info))
