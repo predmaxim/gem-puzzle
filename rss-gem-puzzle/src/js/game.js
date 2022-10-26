@@ -42,8 +42,6 @@ class Game {
     this.setCanvas();
     this.playAudio();
 
-
-
     document.addEventListener('click', (e) => {
       if (e.target == this.canvas && this.isGame) this.moveBlock(e);
       if (e.target == this.startBtn) this.start();
@@ -389,13 +387,8 @@ class Game {
       }
     }
 
-
-
     const i = this.info.reduce((acc, e, i) => e.id === this.frameSize.id ? acc += i : acc, 0)
     this.info[i] = JSON.parse(JSON.stringify(this.frameSize));
-
-    console.log(this.info[i], this.frameSize)
-
 
     localStorage.setItem('info', JSON.stringify(this.info))
     console.log('Game saved')
@@ -437,7 +430,6 @@ class Game {
     }
     return false
   }
-
 
   isSolved() {
     const w = this.frameSize.winnerBlocksResult.slice()
