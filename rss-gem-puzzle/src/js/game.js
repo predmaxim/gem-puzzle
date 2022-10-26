@@ -1,81 +1,7 @@
 class Game {
 
   constructor(setting) {
-    this.setting = setting;
-    this.info = [
-      {
-        id: 3,
-        time: { minutes: 0, seconds: 0 },
-        moves: 0,
-        blocksMap: [],
-        winnerBlocksResult: [...Array(9).keys()],
-        best: {
-          time: { minutes: 0, seconds: 0 },
-          moves: 0,
-        },
-        last: false
-      },
-      {
-        id: 4,
-        time: { minutes: 0, seconds: 0 },
-        moves: 0,
-        blocksMap: [],
-        winnerBlocksResult: [...Array(16).keys()],
-        best: {
-          time: { minutes: 0, seconds: 0 },
-          moves: 0,
-        },
-        last: false
-      },
-      {
-        id: 5,
-        time: { minutes: 0, seconds: 0 },
-        moves: 0,
-        blocksMap: [],
-        winnerBlocksResult: [...Array(25).keys()],
-        best: {
-          time: { minutes: 0, seconds: 0 },
-          moves: 0,
-        },
-        last: false
-      },
-      {
-        id: 6,
-        time: { minutes: 0, seconds: 0 },
-        moves: 0,
-        blocksMap: [],
-        winnerBlocksResult: [...Array(36).keys()],
-        best: {
-          time: { minutes: 0, seconds: 0 },
-          moves: 0,
-        },
-        last: false
-      },
-      {
-        id: 7,
-        time: { minutes: 0, seconds: 0 },
-        moves: 0,
-        blocksMap: [],
-        winnerBlocksResult: [...Array(49).keys()],
-        best: {
-          time: { minutes: 0, seconds: 0 },
-          moves: 0,
-        },
-        last: false
-      },
-      {
-        id: 8,
-        time: { minutes: 0, seconds: 0 },
-        moves: 0,
-        blocksMap: [],
-        winnerBlocksResult: [...Array(64).keys()],
-        best: {
-          time: { minutes: 0, seconds: 0 },
-          moves: 0,
-        },
-        last: false
-      },
-    ];
+    this.info = [];
     this.defaultFSid = 4;
     this.itemSize = 80;
     this.minutes = 0;
@@ -89,11 +15,28 @@ class Game {
     this.zeroBlock = [];
     this.currentBlock = {};
     this.sound = this.playAudio();
-    this.createPage();
     this.init();
   }
 
   init() {
+    const createInfoObjs = () => {
+      return [...Array(6).keys()].map((el, i) => {
+        return el = {
+          id: i + 3,
+          time: { minutes: 0, seconds: 0 },
+          moves: 0,
+          blocksMap: [],
+          winnerBlocksResult: [...Array((i + 3) * (i + 3)).keys()],
+          best: {
+            time: { minutes: 0, seconds: 0 },
+            moves: 0,
+          },
+          last: false
+        }
+      })
+    }
+    this.info = createInfoObjs()
+    this.createPage();
     this.alert()
     this.restore(this.defaultFSid);
     this.setCanvas();
@@ -525,6 +468,3 @@ class Game {
 
 
 export default Game;
-
-
-
