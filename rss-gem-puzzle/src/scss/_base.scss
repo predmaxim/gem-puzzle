@@ -1,0 +1,157 @@
+$site-wide: 1200px;
+$color-black: #000;
+$color-white: #fff;
+$color-burlywood: burlywood;
+$four: 4;
+
+html {
+  font-size: 16px;
+  color: $color-black;
+  background: $color-white;
+}
+
+body {
+  position: relative;
+  height: 100%;
+}
+
+main {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    padding: 0;
+  }
+}
+
+
+footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+  text-align: center;
+}
+
+.container {
+  max-width: $site-wide;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+
+  @media screen and (max-width: 768px) {
+    margin-bottom: 30px;
+    margin-right: 0;
+  }
+}
+
+.additional {
+  background: #9fd0de;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 100px;
+
+  @media screen and (max-width: 768px) {
+    margin-top: 0;
+  }
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.buttons,
+.current-info,
+.frame-size-info,
+.other-frame-sizes {
+  display: flex;
+  justify-content: center;
+  margin: 10px;
+}
+
+.buttons {
+  :not(:last-child) {
+    margin-right: 5px;
+  }
+
+  .sound {
+    padding: 5px 14px;
+    img {
+      width: 15px;
+    }
+  }
+
+  button {
+    padding: 10px 14px;
+    background: #0075da;
+    color: #fff;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    transition: .3s;
+
+    @media screen and (max-width: 375px) {
+      padding: 10px 8px;
+    }
+
+    &:hover,
+    &.active {
+      background: #9c9c9c;
+    }
+  }
+}
+
+.current-info {
+  .moves {
+    margin-right: 20px;
+  }
+}
+
+.game-container {
+  display: grid;
+  justify-content: center;
+  position: relative;
+
+  .game {
+    border: 1px solid rgb(156, 156, 156);
+    border-radius: 5px;
+
+    max-width: 100%;
+  }
+
+  .message {
+    background: #fcf5c4;
+    color: rgb(0, 0, 0);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+
+    &.winner {
+      background: #9cff9f;
+    }
+
+    div {
+      margin-bottom: 10px;
+    }
+  }
+
+}
+
+.other-frame-sizes {
+  .frame-size {
+    margin-left: 10px;
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+}
