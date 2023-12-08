@@ -82,7 +82,12 @@ class Game {
       document.body.prepend(container)
 
       let h1 = document.createElement('h1')
-      h1.textContent = 'RSS Gem Puzzle'
+      h1.textContent = 'Gem Puzzle by '
+      const a = document.createElement('a')
+      a.href = 'https://github.com/predmaxim'
+      a.textContent = 'PredMaxim'
+      a.target = '_blank'
+      h1.append(a)
       container.prepend(h1)
 
       let buttons = document.createElement('div')
